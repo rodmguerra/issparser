@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KitRomHandler implements RomHandler<TeamKits> {
-    private final String rom;
+    private final File rom;
 
     private static final long OFFSET = 0x02EA3B;
     private static final int COLOR_BYTE_COUNT = 2;
@@ -29,13 +29,12 @@ public class KitRomHandler implements RomHandler<TeamKits> {
     private static final  int LENGTH = TEAM_COUNT * KIT_LENGTH * 2;
 
 
-    public KitRomHandler(String rom) {
+    public KitRomHandler(File rom) {
         this.rom = rom;
     }
 
     public List<TeamKits> readFromRom() throws IOException {
-        File file = new File(rom);
-        ByteSource source = Files.asByteSource(file).slice(OFFSET, LENGTH);
+        ByteSource source = Files.asByteSource(rom).slice(OFFSET, LENGTH);
         byte[] bytes = source.read();
 
         List<TeamKits> teamKits = new ArrayList<>();
@@ -98,7 +97,7 @@ public class KitRomHandler implements RomHandler<TeamKits> {
     }
 
     public static void main(String[] args) throws IOException {
-        new KitRomHandler("isse.sfc").readFromRom();
+        new KitRomHandler(new File("isse.sfc")).readFromRom();
     }
 
 

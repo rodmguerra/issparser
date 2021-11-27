@@ -6,6 +6,7 @@ import issparser.playernames.Module;
 import issparser.playernames.PlayerNameFileSystemHandler;
 import issparser.playernames.PlayerNameRomHandler;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,10 +28,10 @@ public class Container {
 
     public Container(String rom) {
         this.rom = rom;
-        PlayerNameRomHandler playerNameRomHandler = new PlayerNameRomHandler(rom, PlayerNameRomHandler.OFFSET_ORIGINAL);
+        PlayerNameRomHandler playerNameRomHandler = new PlayerNameRomHandler(new File(rom), PlayerNameRomHandler.OFFSET_ORIGINAL);
         PlayerNameFileSystemHandler playerNameFileSystemHandler = new PlayerNameFileSystemHandler(PLAYER_NAMES_DIR, PLAYER_NAMES_FILE_PREFFIX, DEFAULT_EXTENSION);
         this.playerNameModule = new Module(playerNameRomHandler, playerNameFileSystemHandler);
-        this.kitsModule = new Module(new KitRomHandler(rom), new KitFileSystemHandler());
+        this.kitsModule = new Module(new KitRomHandler(new File(rom)), new KitFileSystemHandler());
     }
 
 

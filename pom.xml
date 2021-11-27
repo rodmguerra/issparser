@@ -57,7 +57,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>issparser.App</mainClass>
+                            <mainClass>issparser.DesktopApp</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

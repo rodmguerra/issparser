@@ -2,6 +2,8 @@ package issparser.commons;
 
 import com.google.common.base.Strings;
 
+import java.text.Normalizer;
+
 public class ParsingUtils {
 
     public static void printPlayerNames(String[] playerNames) {
@@ -9,6 +11,13 @@ public class ParsingUtils {
             if(i%15 == 0) System.out.println("\n" + i/15);
             System.out.println(playerNames[i]);
         }
+    }
+
+    public static String stripAccents(String s)
+    {
+        s = Normalizer.normalize(s, Normalizer.Form.NFD);
+        s = s.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+        return s;
     }
 
     public static byte[] issBytes(CharSequence string) {
