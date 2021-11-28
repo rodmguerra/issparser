@@ -5,6 +5,12 @@ import java.awt.*;
 import java.io.File;
 
 public class HomeController extends AbstractController {
+
+    @Override
+    public void setState(State state) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public HomeController(Router router) {
         super(router);
         panel = new JPanel(new FlowLayout(FlowLayout.CENTER));

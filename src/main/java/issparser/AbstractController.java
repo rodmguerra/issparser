@@ -3,20 +3,13 @@ package issparser;
 
 import javax.swing.*;
 
-public abstract class AbstractController implements Controller {
+public abstract class AbstractController<T> implements Controller<T> {
 
-    protected State state;
     protected JPanel panel;
     protected Router router;
 
-    public State getState() {
-        return state;
-    }
 
-    public void setState(State state) {
-        this.state = state;
-    }
-
+    public abstract void setState(State state);
 
     public JPanel getPanel() {
         return panel;

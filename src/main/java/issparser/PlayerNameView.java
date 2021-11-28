@@ -7,41 +7,20 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class PlayerNameView extends AbstractTeamView<Iterable<String>> {
-
-    private JPanel panel;
-    private java.util.List<JTextField> fields = new ArrayList<>();
-    private JComboBox<String> teamCombo;
-
+    private java.util.List<JTextField> fields;
 
     public PlayerNameView() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        BoxLayout grid = new BoxLayout(panel, BoxLayout.Y_AXIS);
-        panel.setLayout(grid);
+        super();
+    }
 
-        /* Change team */
-        JPanel teamChangePanel = new JPanel(new GridLayout(1,2));
-        JButton previousTeamButton = new JButton("<<");
-        previousTeamButton.addActionListener(e -> previousTeamListener.run());
-        teamChangePanel.add(previousTeamButton);
+    @Override
+    protected int resourceIndex() {
+        return 0;
+    }
 
-        teamCombo = new JComboBox<>(TEAMS);
-        teamCombo.addItemListener(e -> teamListener.accept(teamCombo.getSelectedIndex()));
-        teamChangePanel.add(teamCombo);
-        JButton nextTeamButton = new JButton(">>");
-        nextTeamButton.addActionListener(e -> nextTeamListener.run());
-        teamChangePanel.add(nextTeamButton);
-        panel.add(teamChangePanel);
-
-        /* Reload */
-        JButton reloadButton = new JButton("Reload from ROM");
-        reloadButton.addActionListener(e -> readListener.run());
-        JPanel reloadPanel = new JPanel(new GridLayout(1,1));
-        reloadPanel.add(reloadButton);
-        panel.add(reloadPanel);
-
+    protected JPanel innerPannel() {
         /* Players */
         JPanel innerPanel = new JPanel();
         FlowLayout playersLayout = new FlowLayout(FlowLayout.CENTER);
@@ -49,20 +28,9 @@ public class PlayerNameView extends AbstractTeamView<Iterable<String>> {
         innerPanel.setLayout(playersLayout);
         innerPanel.add(panelForPlayerNames("Starting", 11));
         innerPanel.add(panelForPlayerNames("Substitutes", 4));
-        panel.add(innerPanel);
-
-          /* Save */
-        JButton saveButton = new JButton("Save to ROM");
-        saveButton.addActionListener(e -> saveListener.accept(getData()));
-        JPanel savePanel = new JPanel(new GridLayout(1,1));
-        savePanel.add(saveButton);
-        panel.add(savePanel);
-        this.panel = panel;
+        return innerPanel;
     }
 
-    public JPanel getPanel() {
-        return panel;
-    }
 
     private JPanel panelForPlayerNames(String title, int size) {
         JPanel panel = new JPanel();
@@ -71,6 +39,7 @@ public class PlayerNameView extends AbstractTeamView<Iterable<String>> {
             JPanel row = new JPanel();
             row.setLayout(new FlowLayout(FlowLayout.LEADING));
             JTextField field = new JTextField(8);
+            if(fields == null) fields = new ArrayList<>();
             fields.add(field);
             System.out.println(fields.size());
             field.addKeyListener(new KeyAdapter() {
@@ -102,12 +71,6 @@ public class PlayerNameView extends AbstractTeamView<Iterable<String>> {
         return playerNames;
     }
 
-    public void setTeamIndex(int teamIndex) {
-        if(teamCombo.getSelectedIndex() != teamIndex)  {
-            this.teamCombo.setSelectedIndex(teamIndex);
-            teamCombo.repaint();
-        }
-    }
 
     public void setData(Iterable<String> playerNames) {
         Iterator<JTextField> fieldsIt = fields.iterator();

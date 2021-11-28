@@ -31,4 +31,5 @@ public class RGB {
                 ", blue=" + blue +
                 '}';
     }
+
 }

@@ -18,9 +18,12 @@ public interface TeamView<T> {
             "Colombia", "Mexico", "U.S.A.", "Nigeria", "Cameroon", "Scotland",
             "S.Korea", "Superstar"};
 
-    void setSaveListener(Consumer<List<String>> saveListener);
-    void setReadListener(Runnable readListener);
-    void setNextTeamListener(Runnable nextTeamListener);
-    void setPreviousTeamListener(Runnable previousTeamListener);
-    void setTeamListener(Consumer<Integer> teamListener);
+    void setSaveListener(Consumer<T> listener);
+    void setReadListener(Runnable listener);
+    void setNextTeamListener(Runnable listener);
+    void setPreviousTeamListener(Runnable listener);
+    void setTeamListener(Consumer<Integer> listener);
+    void setNextResourceListener(Runnable listener);
+    void setPreviousResourceListener(Runnable listener);
+    void setResourceListener(Consumer<Integer> listener);
 }

@@ -94,6 +94,17 @@ public class TeamNameRomHandler implements RomHandler<String> {
 
     }
 
+    @Override
+    public String readFromRomAt(int index) throws IOException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void writeToRomAt(int index, String input) throws IOException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+
     private byte[] teamNameRelevantBytes(String teamName) {
         byte[] bytes = new byte[MAX_CHARS];
         for (int i=0; i<teamName.length(); i++) {

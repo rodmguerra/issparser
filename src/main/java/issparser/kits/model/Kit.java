@@ -65,4 +65,5 @@ public class Kit {
                 ", socks=" + socks +
                 '}';
     }
+
 }

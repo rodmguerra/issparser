@@ -2,8 +2,7 @@ package issparser;
 
 import javax.swing.*;
 
-public interface Controller {
+public interface Controller<T> {
     JPanel getPanel();
-    State getState();
     void setState(State state);
 }

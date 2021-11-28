@@ -40,7 +40,7 @@ public class KitRomHandler implements RomHandler<TeamKits> {
         List<TeamKits> teamKits = new ArrayList<>();
 
         for(int i=0; i<bytes.length; i+=(KIT_LENGTH*2)){
-            teamKits.add(new TeamKits(parseKit(bytes, i), parseKit(bytes, i+KIT_LENGTH)));
+            teamKits.add(new TeamKits(parseKit(bytes, i), parseKit(bytes, i+KIT_LENGTH*2)));
         }
 
         return teamKits;
@@ -73,7 +73,7 @@ public class KitRomHandler implements RomHandler<TeamKits> {
     private KitPart parsePart(byte[] bytes, int offset, int partColorCount) {
         RGB[] partColors = new RGB[partColorCount];
         for(int i=0; i<partColorCount; i++){
-            partColors[i] = parseRGB(bytes[offset+i],bytes[i+offset+i+1]);
+            partColors[i] = parseRGB(bytes[offset+i*2],bytes[offset+i*2+1]);
         }
         return new KitPart(partColors);
     }
@@ -96,8 +96,21 @@ public class KitRomHandler implements RomHandler<TeamKits> {
         issparser.commons.FileUtils.writeToPosition(rom, bytes, OFFSET);   */
     }
 
+    @Override
+    public TeamKits readFromRomAt(int index) throws IOException {
+        System.out.println("Reading kits of team " + index);
+        ByteSource source = Files.asByteSource(rom).slice(OFFSET + (32 * index), 640 + 32);
+        byte[] bytes = source.read();
+        return new TeamKits(parseKit(bytes, 0), parseKit(bytes, 640));
+    }
+
+    @Override
+    public void writeToRomAt(int index, TeamKits input) throws IOException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public static void main(String[] args) throws IOException {
-        new KitRomHandler(new File("isse.sfc")).readFromRom();
+        System.out.println( new KitRomHandler(new File("isse.sfc")).readFromRomAt(0).getSecond().getShirt());
     }
 
 

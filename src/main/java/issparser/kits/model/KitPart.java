@@ -19,10 +19,9 @@ public class KitPart {
 
     @Override
     public String toString() {
-        return "issparser.kits.model.KitPart{" +
+        return "KitPart{" +
                 "rgbs=" + Arrays.toString(rgbs) +
                 '}';
     }
-
 
 }
