@@ -50,9 +50,12 @@ public class Router {
         frame.getContentPane().add(controller.getPanel());
         double width = frame.getPreferredSize().getWidth();
         double height = frame.getPreferredSize().getHeight();
+        frame.repaint();
+
         if(width < 500 && height < 250) {
             frame.setSize(500, 250);
-        } else frame.pack();
+        } else {frame.pack(); }
+
     }
 
     public void navigate(State state) {

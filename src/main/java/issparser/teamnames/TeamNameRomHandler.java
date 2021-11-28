@@ -12,6 +12,7 @@ import java.util.List;
 
 
 /* Não está funcionando ainda rom apresenta várias idiossincrasias */
+/*
 public class TeamNameRomHandler implements RomHandler<String> {
 
     private static final int A = 0xc0;
@@ -53,7 +54,6 @@ public class TeamNameRomHandler implements RomHandler<String> {
     public TeamNameRomHandler(String rom) {
         this.rom = rom;
     }
-
 
     @Override
     public Iterable<String> readFromRom() throws IOException {
@@ -157,3 +157,4 @@ public class TeamNameRomHandler implements RomHandler<String> {
         h.writeToRom(null);
     }
 }
+   */

@@ -1,10 +1,13 @@
 package issparser;
 
+import issparser.commons.RomHandler;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -14,7 +17,7 @@ public abstract class AbstractTeamView<T> extends AbstractRomView<T> implements 
     protected Runnable nextTeamListener;
     protected Runnable previousTeamListener;
     protected Runnable readListener;
-    protected Consumer<Integer> teamListener;
+    protected Consumer<RomHandler.Team> teamListener;
 
     private JPanel panel;
     private JComboBox<String> teamCombo;
@@ -36,7 +39,7 @@ public abstract class AbstractTeamView<T> extends AbstractRomView<T> implements 
         this.previousTeamListener = previousTeamListener;
     }
 
-    public void setTeamListener(Consumer<Integer> teamListener) {
+    public void setTeamListener(Consumer<RomHandler.Team> teamListener) {
         this.teamListener = teamListener;
     }
 
@@ -69,9 +72,9 @@ public abstract class AbstractTeamView<T> extends AbstractRomView<T> implements 
         JButton previousTeamButton = new JButton("<<");
         previousTeamButton.addActionListener(e -> previousTeamListener.run());
         teamChangePanel.add(previousTeamButton);
-        teamCombo = new JComboBox<>(TEAMS);
+        teamCombo = new JComboBox<>(Stream.of(RomHandler.Team.values()).map(RomHandler.Team::toString).toArray(String[]::new));
         teamCombo.addItemListener(e -> {
-            teamListener.accept(teamCombo.getSelectedIndex());
+            teamListener.accept(RomHandler.Team.at(teamCombo.getSelectedIndex()));
         } );
         teamChangePanel.add(teamCombo);
         JButton nextTeamButton = new JButton(">>");
@@ -128,7 +131,8 @@ public abstract class AbstractTeamView<T> extends AbstractRomView<T> implements 
     }
 
 
-    public void setTeamIndex(int teamIndex) {
+    public void setTeam(RomHandler.Team team) {
+        int teamIndex = team.ordinal();
         if(teamCombo.getSelectedIndex() != teamIndex)  {
             this.teamCombo.setSelectedIndex(teamIndex);
             teamCombo.repaint();

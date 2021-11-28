@@ -30,18 +30,18 @@ public abstract class AbstractTeamController<T> extends AbstractController<T> {
             }
         }
         this.view = view;
-        view.setSaveListener(playerNames -> {
+        view.setSaveListener(data -> {
             try {
-                int teamIndex = router.getState().getTeamIndex();
-                romHandler.writeToRomAt(teamIndex, (T) playerNames);
-                view.setData(romHandler.readFromRomAt(teamIndex));
+                RomHandler.Team team = router.getState().getTeam();
+                romHandler.writeToRomAt(team, (T) data);
+                view.setData(romHandler.readFromRomAt(team));
             } catch (IOException e1) {
                 throw new RuntimeException(e1);
             }
         });
         view.setReadListener(() -> {
             try {
-                view.setData(romHandler.readFromRomAt(router.getState().getTeamIndex()));
+                view.setData(romHandler.readFromRomAt(router.getState().getTeam()));
             } catch (IOException e1) {
                 throw new RuntimeException(e1);
             }
@@ -49,7 +49,7 @@ public abstract class AbstractTeamController<T> extends AbstractController<T> {
 
         view.setNextTeamListener(() -> router.navigate(router.getState().nextTeam()));
         view.setPreviousTeamListener(() -> router.navigate(router.getState().previousTeam()));
-        view.setTeamListener(teamIndex -> router.navigate(router.getState().withTeam(teamIndex)));
+        view.setTeamListener(team -> router.navigate(router.getState().withTeam(team)));
 
         view.setNextResourceListener(router::nextResource);
         view.setPreviousResourceListener(router::previousResource);
@@ -59,10 +59,10 @@ public abstract class AbstractTeamController<T> extends AbstractController<T> {
     }
 
     public void reloadView() {
-        //if(router.getState().getRom()!= null && router.getState().getTeamIndex() != -1)
+        //if(router.getState().getRom()!= null && router.getState().getTeam() != -1)
         try {
-            view.setTeamIndex(router.getState().getTeamIndex());
-            view.setData(romHandler.readFromRomAt(router.getState().getTeamIndex()));
+            view.setTeam(router.getState().getTeam());
+            view.setData(romHandler.readFromRomAt(router.getState().getTeam()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

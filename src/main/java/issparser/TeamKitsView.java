@@ -46,9 +46,12 @@ public class TeamKitsView {
     }
 
     public void setFromModel(TeamKits teamKits) {
-        System.out.println(teamKits);
         this.first.setFromModel(teamKits.getFirst());
         this.second.setFromModel(teamKits.getSecond());
 
+    }
+
+    public TeamKits toModel() {
+        return new TeamKits(first.toModel(), second.toModel());
     }
 }

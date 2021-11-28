@@ -1,6 +1,8 @@
 package issparser;
 
 
+import issparser.commons.RomHandler;
+
 import java.io.File;
 
 public class State {
@@ -9,23 +11,23 @@ public class State {
     }
 
     public State(File rom) {
-        this(rom, 0);
+        this(rom, RomHandler.Team.GERMANY);
     }
 
-    public State(File rom, int teamIndex) {
-        this.teamIndex = teamIndex;
+    public State(File rom, RomHandler.Team team) {
+        this.team = team;
         this.rom = rom;
     }
 
-    private final int teamIndex;
+    private final RomHandler.Team team;
     private final File rom;
 
     public State nextTeam() {
-        return new State(rom, (teamIndex + 1) % 27 );
+        return new State(rom, team.next() );
     }
 
-    public int getTeamIndex() {
-        return teamIndex;
+    public RomHandler.Team getTeam() {
+        return team;
     }
 
     public File getRom() {
@@ -33,17 +35,17 @@ public class State {
     }
 
     public State previousTeam() {
-        return new State(rom, (teamIndex + 27 - 1) % 27 );
+        return new State(rom, team.previous() );
 
     }
 
     public State withRom(File rom) {
-        return new State(rom, teamIndex);
+        return new State(rom, team);
     }
 
 
-    public State withTeam(int teamIndex) {
-        return new State(rom, teamIndex);
+    public State withTeam(RomHandler.Team team) {
+        return new State(rom, team);
     }
 
     @Override
@@ -53,7 +55,7 @@ public class State {
 
         State state = (State) o;
 
-        if (teamIndex != state.teamIndex) return false;
+        if (team != state.team) return false;
         if (rom != null ? !rom.equals(state.rom) : state.rom != null) return false;
 
         return true;
@@ -61,8 +63,8 @@ public class State {
 
     @Override
     public int hashCode() {
-        int result = teamIndex;
-        result = 31 * result + (rom != null ? rom.hashCode() : 0);
+        int result = team.hashCode();
+        result = 31 * result + rom.hashCode();
         return result;
     }
 }

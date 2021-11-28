@@ -62,4 +62,8 @@ public class KitView {
         shorts.setFromModel(kit.getShorts());
         socks.setFromModel(kit.getSocks());
     }
+
+    public Kit toModel() {
+        return new Kit(shirt.toModel(), shorts.toModel(), socks.toModel());
+    }
 }

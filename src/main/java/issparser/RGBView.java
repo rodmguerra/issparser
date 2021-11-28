@@ -12,6 +12,7 @@ public class RGBView {
     private final JSpinner blue;
     private final JPanel display;
 
+
     /*
     public static RGBView fromModel(RGB rgb) {
         JSpinner red = new JSpinner(new SpinnerNumberModel(rgb.getRed(), 0,31,1));
@@ -21,7 +22,9 @@ public class RGBView {
     }
     */
 
+
     public RGBView(JSpinner red, JSpinner green, JSpinner blue, JPanel display) {
+
         this.red = red;
         this.green = green;
         this.blue = blue;
@@ -54,6 +57,17 @@ public class RGBView {
     }
 
     public static RGBView zero() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (UnsupportedLookAndFeelException e) {
+            throw new RuntimeException(e);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        }
         JSpinner red = new JSpinner(new SpinnerNumberModel(0, 0, 31, 1));
         JSpinner green = new JSpinner(new SpinnerNumberModel(0, 0, 31, 1));
         JSpinner blue = new JSpinner(new SpinnerNumberModel(0, 0, 31, 1));
@@ -87,9 +101,9 @@ public class RGBView {
         green.setValue(greenLevel);
         int blueLevel = rgb.getBlue();
         blue.setValue(blueLevel);
-        int systemRed = redLevel > 15 ? (redLevel +1) * 8 - 1 : redLevel * 8;
-        int systemGreen = greenLevel > 15? (greenLevel +1) * 8 - 1 : greenLevel * 8;
-        int systemBlue = blueLevel > 15? (blueLevel +1) * 8 - 1 : blueLevel * 8;
+        int systemRed = redLevel > 15 ? (redLevel + 1) * 8 - 1 : redLevel * 8;
+        int systemGreen = greenLevel > 15 ? (greenLevel + 1) * 8 - 1 : greenLevel * 8;
+        int systemBlue = blueLevel > 15 ? (blueLevel + 1) * 8 - 1 : blueLevel * 8;
         Color color = new Color(systemRed, systemGreen, systemBlue);
         display.setForeground(color);
         display.setBackground(color);
@@ -108,5 +122,9 @@ public class RGBView {
         display.setForeground(color);
         display.setBackground(color);
         display.repaint();
+    }
+
+    public RGB toModel() {
+        return new RGB((int) red.getValue(), (int) green.getValue(), (int) blue.getValue());
     }
 }

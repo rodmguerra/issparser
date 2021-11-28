@@ -80,7 +80,7 @@ public class UniformView extends AbstractTeamView<TeamKits> {
 
     @Override
     public TeamKits getData() {
-        return new TeamKits(null, null);
+        return teamKitsView.toModel();
     }
 
     @Override

@@ -63,7 +63,7 @@ public class ParsingUtils {
         return (byte) 0;
     }
 
-    public static CharSequence center(String teamPlayer, int size) {
+    public static CharSequence cutAndCenter(String teamPlayer, int size) {
         StringBuilder sb = new StringBuilder();
         String name = teamPlayer.trim();
         if(name.length() > size) name = name.substring(0, 8);

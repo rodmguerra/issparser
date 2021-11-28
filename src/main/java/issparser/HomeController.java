@@ -26,7 +26,7 @@ public class HomeController extends AbstractController {
             if (fileChooser.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
                 File rom = fileChooser.getSelectedFile();
                 State state = router.getState().withRom(rom);
-                if(state.getTeamIndex() < 0) state = state.withTeam(0);
+                //if(state.getTeam() < 0) state = state.withTeam(0);
                 router.navigate(Router.Route.PLAYER_NAMES, state);
             }
         });

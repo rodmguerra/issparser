@@ -52,4 +52,8 @@ public class KitPartView {
             rgbs[i].setFromModel(modelRgbs[i]);
         }
     }
+
+    public KitPart toModel() {
+        return new KitPart(Stream.of(rgbs).map(RGBView::toModel).toArray(RGB[]::new));
+    }
 }
