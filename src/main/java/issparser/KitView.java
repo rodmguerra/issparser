@@ -16,7 +16,7 @@ public class KitView {
 
     /*
     public static KitView fromModel(Kit kit) {
-        KitPartView shirt = KitPartView.fromModel(kit.getShirt());
+        KitPartView shirt = KitPartView.fromModel(kit.getShirtAndSocks());
         KitPartView shorts = KitPartView.fromModel(kit.getShorts());
         KitPartView socks = KitPartView.fromModel(kit.getSocks());
         return new KitView(shirt, shorts, socks);

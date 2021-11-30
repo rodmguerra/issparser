@@ -51,15 +51,24 @@ public class ParsingUtils {
     public static char issChar(byte b) {
         if(unsigned(b) >= 0x6c && unsigned(b) <= 0x85) return (char) (unsigned(b) - 0x6c + 'A');
         if(unsigned(b) >= 0x86 && unsigned(b) <= 0x9f) return (char) (unsigned(b) - 0x86 + 'a');
+        if(unsigned(b) >= 0x62 && unsigned(b) <= 0x6B) return (char) (unsigned(b) - 0x62 + '0');
         if(unsigned(b) == 0x00) return ' ';
         if(unsigned(b) == 0x54) return '.';
+        if(unsigned(b) == 0x56) return '\"';
+        if(unsigned(b) == 0x5C) return '\'';
+        if(unsigned(b) == 0x5F) return '/';
         return  '#';
     }
 
     public static byte charToIss(char c) {
         if(c >= 'A' && c <= 'Z') return (byte) (c - 'A' + 0x6c);
         if(c >= 'a' && c <= 'z') return (byte) (c - 'a' + 0x86);
+        if(c >= '0' && c <= '9') return (byte) (c - '0' + 0x62);
         if(c == '.') return (byte) 0x54;
+        if(c == '\"') return (byte) 0x56;
+        if(c == '-') return (byte) 0x53;
+        if(c == '\'') return (byte) 0x5C;
+        if(c == '/') return (byte) 0x5F;
         return (byte) 0;
     }
 

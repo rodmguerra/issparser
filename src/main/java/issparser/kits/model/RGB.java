@@ -25,7 +25,7 @@ public class RGB {
 
     @Override
     public String toString() {
-        return "issparser.kits.model.RGB{" +
+        return "RGB{" +
                 "red=" + red +
                 ", green=" + green +
                 ", blue=" + blue +

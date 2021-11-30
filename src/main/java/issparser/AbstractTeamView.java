@@ -20,7 +20,7 @@ public abstract class AbstractTeamView<T> extends AbstractRomView<T> implements 
     protected Consumer<RomHandler.Team> teamListener;
 
     private JPanel panel;
-    private JComboBox<String> teamCombo;
+    protected JComboBox<String> teamCombo;
     private JComboBox<String> resourceCombo;
 
     public void setSaveListener(Consumer<T> saveListener) {
@@ -75,7 +75,7 @@ public abstract class AbstractTeamView<T> extends AbstractRomView<T> implements 
         teamCombo = new JComboBox<>(Stream.of(RomHandler.Team.values()).map(RomHandler.Team::toString).toArray(String[]::new));
         teamCombo.addItemListener(e -> {
             teamListener.accept(RomHandler.Team.at(teamCombo.getSelectedIndex()));
-        } );
+        });
         teamChangePanel.add(teamCombo);
         JButton nextTeamButton = new JButton(">>");
         nextTeamButton.addActionListener(e -> nextTeamListener.run());
