@@ -4,7 +4,7 @@
 - Run jar file (Required Java 8 or higher)
 
 ### Author
-Rodrigo Guerra
+* Rodrigo Guerra
 
 ### Special thanks to
 * Equipe Puma (particularly, Daniel Cardoso), for precious support, including rom hacking information, lots of offset maps and feature suggestions.
