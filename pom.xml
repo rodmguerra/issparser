@@ -6,7 +6,7 @@
 
     <groupId>issparser</groupId>
     <artifactId>issparser</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.2.1</version>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
@@ -63,6 +63,8 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <finalName>rodmguerra-iss-editor-${project.version}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
                     <execution>
@@ -74,6 +76,7 @@
                     </execution>
                 </executions>
             </plugin>
+
 
         </plugins>
     </build>

@@ -22,6 +22,7 @@ public class DesktopApp {
         }
 
         JFrame frame = new JFrame();//creating instance of JFrame
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         router = new Router(frame);
         JMenuBar menuBar = new JMenuBar();
         JMenu file = subMenu(menuBar, "File");
