@@ -5,5 +5,5 @@
 
 
 ### Special thanks to
-* Equipe Puma (particularly, Daniel Cardoso), for precious support, including rom hacking information, lots of offset maps and suggestions.
+* Equipe Puma (particularly, Daniel Cardoso), for precious support, including rom hacking information, lots of offset maps and feature suggestions.
 * Equipe Falcon Brasil, for video tutorials, information on goalkeeper colors, player hair and skin and feature suggestions.
