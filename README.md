@@ -1,7 +1,7 @@
 ### Download link
-[Rodmguerra's ISS Editor 1.2.1](https://github.com/rodmguerra/issparser/files/7627969/rodmguerra-iss-editor-1.2.1.zip)
-- Unzip
-- Run jar file (Required Java 8 or higher)
+
+- Download and run jar file (Required Java 8 or higher)
+[Rodmguerra's ISS Editor 1.3](https://github.com/rodmguerra/issparser/releases/download/v1.3/rodmguerra-iss-editor-1.3.jar)
 
 ### Author
 * Rodrigo Guerra
