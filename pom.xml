@@ -57,7 +57,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>issparser.DesktopApp</mainClass>
+                            <mainClass>io.github.rodmguerra.isseditor.DesktopApp</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
