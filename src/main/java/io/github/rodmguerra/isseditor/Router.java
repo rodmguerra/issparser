@@ -2,6 +2,8 @@ package io.github.rodmguerra.isseditor;
 
 import io.github.rodmguerra.isseditor.flagcolor.FlagColorController;
 import io.github.rodmguerra.isseditor.flagcolor.FlagColorPage;
+import io.github.rodmguerra.isseditor.flagdesign.FlagDesignController;
+import io.github.rodmguerra.isseditor.flagdesign.FlagDesignPage;
 import io.github.rodmguerra.isseditor.hairandskin.HairAndSkinColorController;
 import io.github.rodmguerra.isseditor.hairandskin.HairAndSkinColorPage;
 import io.github.rodmguerra.isseditor.home.HomeController;
@@ -21,7 +23,8 @@ public class Router {
         PLAYER_NAMES(0),
         UNIFORM_COLORS(1),
         HAIR_AND_SKIN_COLORS(2),
-        FLAG_COLORS(3);
+        FLAG_COLORS(3),
+        FLAG_DESIGN(4);
         private final int resource;
 
         private Route(int resource) {
@@ -48,6 +51,7 @@ public class Router {
         controllers.put(Route.UNIFORM_COLORS, new UniformColorController(this, new UniformColorPage()));
         controllers.put(Route.HAIR_AND_SKIN_COLORS, new HairAndSkinColorController(this, new HairAndSkinColorPage()));
         controllers.put(Route.FLAG_COLORS, new FlagColorController(this, new FlagColorPage()));
+        controllers.put(Route.FLAG_DESIGN, new FlagDesignController(this, new FlagDesignPage()));
         this.state = new State();
     }
 
@@ -60,7 +64,9 @@ public class Router {
         this.state = state;
         frame.getContentPane().removeAll();
         Controller controller = controllers.get(route);
-        if(!state.equals(oldState) || !route.equals(oldRoute)) controller.setState(state);
+        if(!state.equals(oldState) || !route.equals(oldRoute)) {
+            controller.setState(state);
+        }
         frame.getContentPane().add(controller.getPanel());
         double width = frame.getPreferredSize().getWidth();
         double height = frame.getPreferredSize().getHeight();

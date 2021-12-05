@@ -1,5 +1,6 @@
 package io.github.rodmguerra.isseditor.color.views;
 
+import io.github.rodmguerra.isseditor.ColorUtils;
 import io.github.rodmguerra.issparser.model.colors.RGB;
 
 import javax.swing.*;
@@ -95,24 +96,19 @@ public class RGBView {
     }
 
     public void setFromModel(RGB rgb) {
-        int redLevel = rgb.getRed();
-        red.setValue(redLevel);
-        int greenLevel = rgb.getGreen();
-        green.setValue(greenLevel);
-        int blueLevel = rgb.getBlue();
-        blue.setValue(blueLevel);
-        int systemRed = redLevel > 15 ? (redLevel + 1) * 8 - 1 : redLevel * 8;
-        int systemGreen = greenLevel > 15 ? (greenLevel + 1) * 8 - 1 : greenLevel * 8;
-        int systemBlue = blueLevel > 15 ? (blueLevel + 1) * 8 - 1 : blueLevel * 8;
-        Color color = new Color(systemRed, systemGreen, systemBlue);
+        red.setValue(rgb.getRed());
+        green.setValue(rgb.getGreen());
+        blue.setValue(rgb.getBlue());
+        Color color = ColorUtils.colorFromSnesRGB(rgb);
         display.setForeground(color);
         display.setBackground(color);
         display.repaint();
     }
 
+
     public Color getColor() {
-        Color color = new Color((int) red.getValue() * 8, (int) green.getValue() * 8, (int) blue.getValue() * 8);
-        return color;
+        RGB rgb = new RGB((int)red.getValue(), (int)green.getValue(), (int)blue.getValue());
+        return ColorUtils.colorFromSnesRGB(rgb);
     }
 
     public void setColor(Color color) {

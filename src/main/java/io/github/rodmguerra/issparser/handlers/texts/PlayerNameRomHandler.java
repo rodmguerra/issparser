@@ -48,7 +48,7 @@ public class PlayerNameRomHandler implements RomHandler<Iterable<String>> {
         ByteSource source = Files.asByteSource(rom).slice(offset, LENGTH);
         byte[] bytes = source.read();
 
-        System.out.println(ParsingUtils.bytesString(bytes));
+        //System.out.println(ParsingUtils.bytesString(bytes));
         String[] playerNames = ParsingUtils.issText(bytes).split("(?<=\\G........)");
         Map<Team, Iterable<String>> teams = new HashMap<>(TEAM_COUNT);
         List<String> teamPlayers = null;
@@ -66,7 +66,7 @@ public class PlayerNameRomHandler implements RomHandler<Iterable<String>> {
     public Iterable<String> readFromRomAt(Team team) throws IOException {
         ByteSource source = Files.asByteSource(rom).slice(offset + positionOf(team) * TEAM_LENGTH, TEAM_LENGTH);
         byte[] bytes = source.read();
-        System.out.println(ParsingUtils.bytesString(bytes));
+        //System.out.println(ParsingUtils.bytesString(bytes));
         String[] playerNames = ParsingUtils.issText(bytes).split("(?<=\\G........)");
         List<String> playerNameList = new ArrayList<>();
         for (String playerName : playerNames) {
@@ -86,7 +86,7 @@ public class PlayerNameRomHandler implements RomHandler<Iterable<String>> {
             }
         }
         byte[] bytes = ParsingUtils.issBytes(sb);
-        System.out.println(ParsingUtils.bytesString(bytes));
+        //System.out.println(ParsingUtils.bytesString(bytes));
         FileUtils.writeToPosition(rom, bytes, offset);
     }
 
@@ -100,7 +100,7 @@ public class PlayerNameRomHandler implements RomHandler<Iterable<String>> {
             sb.append(treatName(teamPlayer));
         }
         byte[] bytes = ParsingUtils.issBytes(sb);
-        System.out.println(ParsingUtils.bytesString(bytes));
+        //System.out.println(ParsingUtils.bytesString(bytes));
         FileUtils.writeToPosition(rom, bytes, offset + positionOf(team) * TEAM_LENGTH);
     }
 
