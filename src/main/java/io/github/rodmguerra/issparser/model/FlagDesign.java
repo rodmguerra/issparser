@@ -1,7 +1,6 @@
 package io.github.rodmguerra.issparser.model;
 
 
-import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class FlagDesign {
@@ -16,16 +15,18 @@ public class FlagDesign {
     }
 
     public enum Color {
-        COLOR_1((byte) 0b1100),
-        COLOR_2((byte) 0b1101),
-        COLOR_3((byte) 0b1110),
-        COLOR_4((byte) 0b1111),
-        TRANSPARENT((byte) 0b0000);
+        COLOR_1((byte) 0b1100, "Color 1"),
+        COLOR_2((byte) 0b1101, "Color 2"),
+        COLOR_3((byte) 0b1110, "Color 3"),
+        COLOR_4((byte) 0b1111, "Color 4"),
+        TRANSPARENT((byte) 0b0000, "Transparent");
 
         private final byte code;
+        private final String name;
 
-        private Color(byte code) {
+        private Color(byte code, String name) {
             this.code = code;
+            this.name = name;
         }
 
         public static Color forCode(byte code) {
@@ -34,6 +35,19 @@ public class FlagDesign {
 
         public byte getCode() {
             return code;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public static Color at(int colorIndex) {
+            for (Color color : Color.values()) {
+                if(color.ordinal() == colorIndex) {
+                    return color;
+                }
+            }
+            return null;
         }
 
         /*

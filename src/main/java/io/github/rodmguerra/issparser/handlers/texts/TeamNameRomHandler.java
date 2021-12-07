@@ -85,7 +85,7 @@ public class TeamNameRomHandler implements RomHandler<String> {
     }
 
     @Override
-    public String readFromRomAt(int index) throws IOException {
+    public String readPointer(int index) throws IOException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

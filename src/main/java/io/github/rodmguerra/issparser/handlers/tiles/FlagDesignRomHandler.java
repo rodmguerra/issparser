@@ -1,11 +1,9 @@
 package io.github.rodmguerra.issparser.handlers.tiles;
 
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 import io.github.rodmguerra.issparser.commons.FileUtils;
-import io.github.rodmguerra.issparser.commons.ParsingUtils;
 import io.github.rodmguerra.issparser.commons.RomHandler;
 import io.github.rodmguerra.issparser.model.FlagDesign;
 import io.github.rodmguerra.issparser.model.FlagSnes4bpp;
@@ -14,6 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.github.rodmguerra.issparser.commons.ParsingUtils.bytesString;
 
@@ -44,8 +44,8 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
 
     @Override
     public FlagDesign readFromRomAt(Team team) throws IOException {
-        int topOffset = readPointer(POINTER_OFFSET + POINTER_STEP * team.ordinal());
-        int bottomOffset = readPointer(2 + POINTER_OFFSET + POINTER_STEP * team.ordinal());
+        int topOffset = readPointer(pointerOffset(team));
+        int bottomOffset = readPointer(pointerOffset(team) + 2);
         FlagDesign.Color[][] flagTop = readFlagPart(topOffset);
         FlagDesign.Color[][] flagBottom = readFlagPart(bottomOffset);
         return new FlagDesign(joinFlagParts(flagTop, flagBottom));
@@ -60,6 +60,49 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
         }
         return flag;
     }
+
+    public void unlinkFlag(Team team) throws IOException {
+        Map<Team, TopAndBottomAddress> addressMap = readAddressMap();
+        SizedAddress address = maximumAddress(addressMap);
+        int nextAddress = address.getAddress() + address.getSize();
+        writeAdressToPointer(pointerOffset(team), nextAddress);
+        TopAndBottomAddress teamAddresses = addressMap.get(team);
+        SizedAddress topAddress = teamAddresses.getTopAddress();
+        byte[] topData = Files.asByteSource(rom).slice(topAddress.getAddress(), topAddress.getSize()).read();
+        FileUtils.writeToPosition(rom, topData, nextAddress);
+        SizedAddress bottomAddress = teamAddresses.getBottomAddress();
+        nextAddress += topData.length;
+        writeAdressToPointer(pointerOffset(team) + 2, nextAddress);
+        byte[] bottomData = Files.asByteSource(rom).slice(bottomAddress.getAddress(), bottomAddress.getSize()).read();
+        FileUtils.writeToPosition(rom, bottomData, nextAddress);
+    }
+
+
+    private long pointerOffset(Team team) {
+        return POINTER_OFFSET + POINTER_STEP * team.ordinal();
+    }
+
+    private SizedAddress maximumAddress(Map<Team, TopAndBottomAddress> addressMap) {
+        return maximumAddress(Stream.concat(
+                addressMap.values().stream().map(TopAndBottomAddress::getTopAddress),
+                addressMap.values().stream().map(TopAndBottomAddress::getBottomAddress)));
+    }
+
+
+    private SizedAddress maximumAddress(Stream<SizedAddress> addresses) {
+        SizedAddress[] sizedAddresses = addresses.toArray(SizedAddress[]::new);
+        int maximumAddress = 0;
+        SizedAddress maximumSizedAddress = null;
+        for (SizedAddress address : sizedAddresses) {
+            if(address.getAddress() > maximumAddress) {
+                maximumAddress = address.getAddress();
+                maximumSizedAddress = address;
+            }
+        }
+        return maximumSizedAddress;
+    }
+
+
 
     @Override
     public void writeToRomAt(Team team, FlagDesign input) throws IOException {
@@ -122,13 +165,12 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
         FileUtils.writeToPosition(rom, bottom,
                 newAddresses.getBottomAddress().getAddress());
 
-        //move new content pointers
 
     }
 
     private void movePointers(Map<Team, TopAndBottomAddress> addressMap, Map<SizedAddress, Integer> addressesToMove) throws IOException {
         for (Team team : Team.values()) {
-            long pointerOffset = POINTER_OFFSET + POINTER_STEP * team.ordinal();
+            long pointerOffset = pointerOffset(team);
             SizedAddress topAddress = addressMap.get(team).getTopAddress();
             if (addressesToMove.containsKey(topAddress)) {
                 System.out.println("moving top pointer of: " + team);
@@ -316,7 +358,7 @@ private Map<Team, TopAndBottomAddress> displaceAddressMap(Map<Team, TopAndBottom
         String decomp = file.getAbsolutePath() + ".decomp";
         Files.write(bytes, new File(decomp));
 
-        String command = "konami\\konami_c \"" + decomp + "\" \"" + comp + "\" 1";
+        String command = "konami\\konami_c \"" + decomp + "\" \"" + comp + "\" 0";
         return Runtime.getRuntime().exec(command, null);
     }
 
@@ -331,7 +373,7 @@ private Map<Team, TopAndBottomAddress> displaceAddressMap(Map<Team, TopAndBottom
 
 
     private FlagDesign.Color[][] readFlagPart(int offset) throws IOException {
-        String command = "konami\\konami_d \"" + rom.getAbsolutePath() + "\" 0x" + Integer.toHexString(offset) + " 1";
+        String command = "konami\\konami_d \"" + rom.getAbsolutePath() + "\" 0x" + Integer.toHexString(offset) + " 0";
         System.out.println(command);
 
         Process process = Runtime.getRuntime().exec(command, null);
@@ -444,7 +486,7 @@ private Map<Team, TopAndBottomAddress> displaceAddressMap(Map<Team, TopAndBottom
     private Map<Team, TopAndBottomAddress> readAddressMap() throws IOException {
         Map<Team, TopAndBottomAddress> map = new HashMap<>();
         for (Team team : Team.values()) {
-            long offset = POINTER_OFFSET + POINTER_STEP * team.ordinal();
+            long offset = pointerOffset(team);
             int topAddress = readPointer(offset);
             ByteSource source = Files.asByteSource(rom);
             int topSize = source.slice(topAddress, 1).read()[0];

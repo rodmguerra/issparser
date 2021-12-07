@@ -6,12 +6,18 @@ import io.github.rodmguerra.issparser.model.colors.RGB;
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.util.function.Consumer;
 
 public class RGBView {
     private final JSpinner red;
     private final JSpinner green;
     private final JSpinner blue;
     private final JPanel display;
+    private Consumer<RGB> colorChangeConsumer = new Consumer<RGB>() {
+        @Override
+        public void accept(RGB rgbView) {
+        }
+    };
 
 
     /*
@@ -50,7 +56,7 @@ public class RGBView {
 
     @Override
     public String toString() {
-        return "io.github.rodmguerra.issparser.color.model.RGB{" +
+        return "RGBView{" +
                 "red=" + red +
                 ", green=" + green +
                 ", blue=" + blue +
@@ -86,6 +92,7 @@ public class RGBView {
             display.setBackground(color);
             display.setForeground(color);
             display.repaint();
+            view.colorChangeConsumer.accept(view.toModel());
         };
         red.addChangeListener(listener);
         green.addChangeListener(listener);
@@ -120,7 +127,12 @@ public class RGBView {
         display.repaint();
     }
 
+    public void onColorChange(Consumer<RGB> consumer) {
+        this.colorChangeConsumer = consumer;
+    }
+
     public RGB toModel() {
         return new RGB((int) red.getValue(), (int) green.getValue(), (int) blue.getValue());
     }
+
 }

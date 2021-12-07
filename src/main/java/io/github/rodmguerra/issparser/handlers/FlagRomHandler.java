@@ -38,6 +38,9 @@ public class FlagRomHandler implements RomHandler<Flag> {
 
     @Override
     public void writeToRomAt(Team team, Flag input) throws IOException {
-        //To change body of implemented methods use File | Settings | File Templates.
+        designHandler.writeToRomAt(team, input.getDesign());
+        colorHandler.writeToRomAt(team, input.getColors());
     }
+
+
 }

@@ -138,9 +138,9 @@ public class FlagDesignRomHandlerNew implements RomHandler<FlagDesign> {
     }
 
     public static void main(String[] args) throws IOException {
-        //System.out.println(new FlagDesignRomHandlerNew(new File("iss.sfc")).readFromRomAt(Team.SCOTLAND));
+        //System.out.println(new FlagDesignRomHandlerNew(new File("iss.sfc")).readPointer(Team.SCOTLAND));
         for (Team team : Team.values()) {
-            //System.out.println(new FlagDesignRomHandlerNew(new File("b95.sfc")).readFromRomAt(team));
+            //System.out.println(new FlagDesignRomHandlerNew(new File("b95.sfc")).readPointer(team));
             System.out.println(new FlagDesignRomHandlerNew(new File("iss.sfc")).readFromRomAt(team));
         }
 
