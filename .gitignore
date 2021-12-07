@@ -1,0 +1,8 @@
+target
+*.sfc
+playerNames
+teamKits
+.idea
+*.xlsx
+*.bin
+*.decomp
