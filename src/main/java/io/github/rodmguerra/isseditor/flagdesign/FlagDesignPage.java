@@ -24,6 +24,7 @@ public class FlagDesignPage extends AbstractTeamPage<Flag> {
     private JLabel teamsUsing;
     private List<RomHandler.Team> teamsUsingThisFlag = new ArrayList<>();
     private JButton moveButton;
+    private JButton addButton;
     private Runnable moveOutConsumer = () -> {
     };
     private Consumer<Iterable<RomHandler.Team>> moveInConsumer = t -> {
@@ -117,9 +118,9 @@ public class FlagDesignPage extends AbstractTeamPage<Flag> {
         JPanel pointerPanel = new JPanel(new BorderLayout());
         //teamsUsingLabel.setForeground(Color.BLUE);
         RomHandler.Team team = getCurrentTeam();
-        moveButton = new JButton("Make flag exclusive of " + team );
+        moveButton = new JButton("Make design exclusive of " + team );
         moveButton.addActionListener(e -> moveOutConsumer.run());
-        JButton addButton = new JButton("Add another team to this flag...");
+        addButton = new JButton("Apply design to other teams...");
         addButton.addActionListener(e -> new AddTeamModal(pointerPanel).setVisible(true));
 
         //saveButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -141,7 +142,7 @@ public class FlagDesignPage extends AbstractTeamPage<Flag> {
         pointerPanel.add(rightPanel, BorderLayout.LINE_END);
         outputPanel.setBorder(BorderFactory.createTitledBorder("Design"));
         radioPanel.setBorder(BorderFactory.createTitledBorder("Color"));
-        pointerPanel.setBorder(BorderFactory.createTitledBorder("Teams using this flag"));
+        pointerPanel.setBorder(BorderFactory.createTitledBorder("Teams using this design"));
         outer.add(pointerPanel);
         outer.add(outputPanel);
         outer.add(radioPanel);
@@ -185,7 +186,7 @@ public class FlagDesignPage extends AbstractTeamPage<Flag> {
         //this.design.setTeamsUsingThisFlag(model.getTeamsUsing());
         List<RomHandler.Team> teams = model.getTeamsUsing();
         List<String> stringList = teams.stream().map(RomHandler.Team::toString).collect(toList());
-        List<String> truncate = truncate(stringList, 5);
+        List<String> truncate = truncate(stringList, 4);
         String labelText = Joiner.on(", ").join(truncate);
         if(truncate.size() < stringList.size()) {
             labelText += ", ...";
@@ -193,8 +194,9 @@ public class FlagDesignPage extends AbstractTeamPage<Flag> {
         }
         this.teamsUsing.setText(labelText);
         this.teamsUsingThisFlag = teams;
-        this.moveButton.setText("Move " + getCurrentTeam() + " to a new address");
+        this.moveButton.setText("Make design exclusive of " + getCurrentTeam());
         this.moveButton.setVisible(teams.size() > 1);
+        this.addButton.setVisible(teams.size() < RomHandler.Team.values().length);
     }
 
     private List<String> truncate(List<String> stringList, int size) {
@@ -224,7 +226,7 @@ public class FlagDesignPage extends AbstractTeamPage<Flag> {
         private final List<RomHandler.Team> teams;
 
         public AddTeamModal(Component component) {
-            setTitle("Add another team to this flag");
+            setTitle("Apply design to other teams...");
 
 
             getContentPane().setLayout(new BorderLayout());
