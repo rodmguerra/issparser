@@ -7,5 +7,6 @@
 * Rodrigo Guerra
 
 ### Special thanks to
-* Equipe Puma (particularly, Daniel Cardoso), for precious support, including rom hacking information, lots of offset maps and feature suggestions.
+* Equipe Puma (particularly, Daniel Cardoso), for support, including rom hacking information, lots of offset maps and feature suggestions.
+* Marcos Fernandes, for dedicated support, and crucial information to make possible flag design
 * Equipe Falcon Brasil, for video tutorials, information on goalkeeper colors, player hair and skin and feature suggestions.
