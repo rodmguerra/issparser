@@ -1,11 +1,10 @@
 package io.github.rodmguerra.isseditor.flagdesign;
 
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
-import io.github.rodmguerra.isseditor.ColorUtils;
-import io.github.rodmguerra.issparser.model.Flag;
+import io.github.rodmguerra.issparser.commons.RomHandler;
 import io.github.rodmguerra.issparser.model.FlagDesign;
-import io.github.rodmguerra.issparser.model.colors.RGB;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -15,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FlagDesignView {
@@ -24,11 +24,14 @@ public class FlagDesignView {
     private final JToggleButton[] buttons = new JToggleButton[FlagDesign.Color.values().length];
     private final ButtonGroup buttonGroup = new ButtonGroup();
     private final Map<ButtonModel, FlagDesign.Color> colorSelectors = new HashMap<>();
+    private final JButton teamsUsingLabel;
 
 
     private FlagDesign model = new FlagDesign(new FlagDesign.Color[16][24]);
 
+
     public FlagDesignView() {
+        teamsUsingLabel = new JButton("Teste");
         FlagDesign.Color[] colorValues = FlagDesign.Color.values();
         colors = Maps.newEnumMap(FlagDesign.Color.class);
 
@@ -43,16 +46,7 @@ public class FlagDesignView {
                 final int col = j;
                 matrix[i][j].addMouseListener(new MouseAdapter() {
                     public void mousePressed(MouseEvent e) {
-                        FlagDesign.Color selectedColor = getSelectedColor();
-                        matrix[row][col].setForeground(colors.get(selectedColor));
-                        matrix[row][col].setBackground(colors.get(selectedColor));
-                        model.getMatrix()[row][col] = selectedColor;
-
-                        if (selectedColor == FlagDesign.Color.TRANSPARENT) {
-                            matrix[row][col].setBorder(null);
-                        } else {
-                            matrix[row][col].setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-                        }
+                        paint(row, col);
                     }
                 });
 
@@ -64,18 +58,11 @@ public class FlagDesignView {
                         SwingUtilities.convertPointFromScreen(location, parent);
                         JPanel component = (JPanel) parent.getComponentAt(location);
                         //System.out.println(component.getBackground());
+
                         if (component != null) {
                             Coordinate coordinates = getPanelPosition(component);
-                            int row = coordinates.getI();
-                            int col = coordinates.getJ();
-                            FlagDesign.Color selectedColor = getSelectedColor();
-                            component.setForeground(colors.get(selectedColor));
-                            component.setBackground(colors.get(selectedColor));
-                            model.getMatrix()[row][col] = selectedColor;
-                            if (selectedColor == FlagDesign.Color.TRANSPARENT) {
-                                component.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-                            } else {
-                                component.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+                            if (coordinates != null) {
+                                paint(coordinates.getI(), coordinates.getJ());
                             }
                         }
                     }
@@ -96,10 +83,24 @@ public class FlagDesignView {
         buttons[0].setSelected(true);
     }
 
+    private void paint(int row, int col) {
+        JComponent component = matrix[row][col];
+        FlagDesign.Color selectedColor = getSelectedColor();
+        component.setForeground(colors.get(selectedColor));
+        component.setBackground(colors.get(selectedColor));
+        model.getMatrix()[row][col] = selectedColor;
+        if (selectedColor == FlagDesign.Color.TRANSPARENT) {
+            component.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        } else {
+            component.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+        }
+    }
+
     public void setFromModel(FlagDesign model) {
         this.model = model;
         updateGrid();
     }
+
 
     public void setColor(FlagDesign.Color designColor, Color uiColor) {
         this.colors.put(designColor, uiColor);
@@ -176,10 +177,14 @@ public class FlagDesignView {
     private Coordinate getPanelPosition(JPanel panel) {
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
-                if(matrix[i][j].equals(panel)) return new Coordinate(i,j);
+                if (matrix[i][j].equals(panel)) return new Coordinate(i, j);
             }
         }
         return null;
+    }
+
+    public JButton getTeamsUsingLabel() {
+        return teamsUsingLabel;
     }
 
     private static class Coordinate {

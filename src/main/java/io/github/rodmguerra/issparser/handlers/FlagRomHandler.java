@@ -2,6 +2,7 @@ package io.github.rodmguerra.issparser.handlers;
 
 
 import io.github.rodmguerra.issparser.commons.RomHandler;
+import io.github.rodmguerra.issparser.handlers.tiles.FlagDesignRomHandler;
 import io.github.rodmguerra.issparser.model.Flag;
 import io.github.rodmguerra.issparser.model.FlagDesign;
 import io.github.rodmguerra.issparser.model.colors.ColoredPart;
@@ -13,10 +14,10 @@ import java.util.Map;
 public class FlagRomHandler implements RomHandler<Flag> {
 
     private final File rom;
-    private final RomHandler<FlagDesign> designHandler;
+    private final FlagDesignRomHandler designHandler;
     private final RomHandler<ColoredPart> colorHandler;
 
-    public FlagRomHandler(File rom, RomHandler<FlagDesign> designHandler, RomHandler<ColoredPart> colorHandler) {
+    public FlagRomHandler(File rom, FlagDesignRomHandler designHandler, RomHandler<ColoredPart> colorHandler) {
         this.rom = rom;
         this.designHandler = designHandler;
         this.colorHandler = colorHandler;
@@ -33,7 +34,7 @@ public class FlagRomHandler implements RomHandler<Flag> {
 
     @Override
     public Flag readFromRomAt(Team team) throws IOException {
-        return new Flag(designHandler.readFromRomAt(team), colorHandler.readFromRomAt(team));
+        return new Flag(designHandler.readFromRomAt(team), colorHandler.readFromRomAt(team), designHandler.teamsSharing(team));
     }
 
     @Override

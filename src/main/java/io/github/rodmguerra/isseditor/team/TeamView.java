@@ -19,4 +19,5 @@ public interface TeamView<T> {
     void setNextResourceListener(Runnable listener);
     void setPreviousResourceListener(Runnable listener);
     void setResourceListener(Consumer<Integer> listener);
+
 }

@@ -9,6 +9,9 @@ public class DesktopApp {
 
     private DesktopApp() {
 
+
+
+
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException e) {
@@ -22,6 +25,12 @@ public class DesktopApp {
         }
 
         JFrame frame = new JFrame();//creating instance of JFrame
+
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            System.out.println("Exception handling: ");
+            JOptionPane.showMessageDialog(frame, e.getMessage());
+            e.printStackTrace();
+        });
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         router = new Router(frame);
         JMenuBar menuBar = new JMenuBar();
@@ -30,10 +39,11 @@ public class DesktopApp {
         open.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
-            if(fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+            if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
                 File rom = fileChooser.getSelectedFile();
                 router.navigate(Router.Route.PLAYER_NAMES, router.getState().withRom(rom));
-            };
+            }
+            ;
         });
 
         frame.setJMenuBar(menuBar);
@@ -60,9 +70,6 @@ public class DesktopApp {
         component.add(submenu);
         return submenu;
     }
-
-
-
 
 
 }

@@ -1,8 +1,11 @@
 package io.github.rodmguerra.issparser.handlers.tiles;
 
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
+import com.google.common.io.Resources;
 import io.github.rodmguerra.issparser.commons.FileUtils;
 import io.github.rodmguerra.issparser.commons.RomHandler;
 import io.github.rodmguerra.issparser.model.FlagDesign;
@@ -12,16 +15,18 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.github.rodmguerra.issparser.commons.ParsingUtils.bytesString;
+import static java.util.Collections.reverseOrder;
+import static java.util.stream.Stream.concat;
 
 public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
 
     private final File rom;
     private static final long POINTER_OFFSET = 0x941a;
     private static final long POINTER_STEP = 4;
+    private int maximumAddress = 0x483FD;
 
     public FlagDesignRomHandler(File rom) {
         this.rom = rom;
@@ -44,12 +49,39 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
 
     @Override
     public FlagDesign readFromRomAt(Team team) throws IOException {
-        int topOffset = readPointer(pointerOffset(team));
+        int topOffset = readPointerAt(team);
         int bottomOffset = readPointer(pointerOffset(team) + 2);
         FlagDesign.Color[][] flagTop = readFlagPart(topOffset);
         FlagDesign.Color[][] flagBottom = readFlagPart(bottomOffset);
         return new FlagDesign(joinFlagParts(flagTop, flagBottom));
     }
+
+    private int readPointerAt(Team team) throws IOException {
+        return readPointer(pointerOffset(team));
+    }
+
+    public List<Team> teamsSharing(Team team) throws IOException {
+        Map<Team, TopAndBottomAddress> addressMap = readAddressMap();
+        return teamsSharing(team, addressMap);
+
+    }
+
+    private static List<Team> teamsSharing(Team team, Map<Team, TopAndBottomAddress> addressMap) {
+        List<Team> teamsSharing = new ArrayList<>();
+        TopAndBottomAddress addresses = addressMap.get(team);
+        for (Team currentTeam : Team.values()) {
+            TopAndBottomAddress currentTeamAdresses = addressMap.get(currentTeam);
+            if (currentTeamAdresses.getBottomAddress().equals(addresses.getBottomAddress()) ||
+                    currentTeamAdresses.getBottomAddress().equals(addresses.getTopAddress()) ||
+                    currentTeamAdresses.getTopAddress().equals(addresses.getTopAddress()) ||
+                    currentTeamAdresses.getTopAddress().equals(addresses.getBottomAddress())) {
+                teamsSharing.add(currentTeam);
+
+            }
+        }
+        return teamsSharing;
+    }
+
 
     private FlagDesign.Color[][] joinFlagParts(FlagDesign.Color[][] flagTop, FlagDesign.Color[][] flagBottom) {
         FlagDesign.Color[][] flag = FlagDesign.newColorArray();
@@ -63,18 +95,105 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
 
     public void unlinkFlag(Team team) throws IOException {
         Map<Team, TopAndBottomAddress> addressMap = readAddressMap();
-        SizedAddress address = maximumAddress(addressMap);
-        int nextAddress = address.getAddress() + address.getSize();
-        writeAdressToPointer(pointerOffset(team), nextAddress);
+        List<Team> teams = teamsSharing(team, addressMap);
+        if (teams.size() <= 1) return;
+        slim(addressMap);
+
+        //read current data
         TopAndBottomAddress teamAddresses = addressMap.get(team);
         SizedAddress topAddress = teamAddresses.getTopAddress();
-        byte[] topData = Files.asByteSource(rom).slice(topAddress.getAddress(), topAddress.getSize()).read();
-        FileUtils.writeToPosition(rom, topData, nextAddress);
         SizedAddress bottomAddress = teamAddresses.getBottomAddress();
-        nextAddress += topData.length;
-        writeAdressToPointer(pointerOffset(team) + 2, nextAddress);
+        byte[] topData = Files.asByteSource(rom).slice(topAddress.getAddress(), topAddress.getSize()).read();
         byte[] bottomData = Files.asByteSource(rom).slice(bottomAddress.getAddress(), bottomAddress.getSize()).read();
-        FileUtils.writeToPosition(rom, bottomData, nextAddress);
+
+        //discover nextAddress
+        SizedAddress address = maximumAddress(addressMap);
+        int newTopAddress = address.getAddress() + address.getSize();
+        int newBottomAddress = newTopAddress + topData.length;
+
+        //write bottom address first so it will throw an exception if size overflows available space
+        writeToPosition(newBottomAddress, bottomData);
+        writeToPosition(newTopAddress, topData);
+        writeTopPointerAt(team, newTopAddress);
+        writeBottomPointerAt(team, newBottomAddress);
+    }
+
+    private void writeTopPointerAt(Team team, int address) throws IOException {
+        writeAdressToPointer(pointerOffset(team), address);
+    }
+
+    private void writeBottomPointerAt(Team team, int address) throws IOException {
+        writeAdressToPointer(pointerOffset(team) + 2, address);
+    }
+
+    private void writePointersAt(Team team, TopAndBottomAddress adresses) throws IOException {
+        writeTopPointerAt(team, adresses.getTopAddress().getAddress());
+        writeBottomPointerAt(team, adresses.getBottomAddress().getAddress());
+    }
+
+
+    public void linkTeams(Team[] fromTeams, Team toTeam) throws IOException {
+        Map<Team, TopAndBottomAddress> addressMap = readAddressMap();
+        int firstAddress = minimumAddress(addressMap).getAddress();
+        for (Team fromTeam : fromTeams) {
+            TopAndBottomAddress toTeamAddresses = addressMap.get(toTeam);
+            writePointersAt(fromTeam, toTeamAddresses);
+            addressMap.put(fromTeam, toTeamAddresses);
+        }
+        slim(addressMap, firstAddress);
+    }
+
+    /**
+     * Warning: for performance, object addressMap is not updated
+     *
+     * @param addressMap
+     * @param firstAddress
+     */
+    private void slim(Map<Team, TopAndBottomAddress> addressMap, int firstAddress) throws IOException {
+        System.out.println("Slim, before: " + invert(addressMap));
+        SortedSet<SizedAddress> sorted = new TreeSet<>();
+        SortedMap<SizedAddress, Integer> toMove = new TreeMap<>();
+        for (TopAndBottomAddress addresses : addressMap.values()) {
+            sorted.add(addresses.getTopAddress());
+            sorted.add(addresses.getBottomAddress());
+        }
+        int nextAddress = firstAddress;
+        for (SizedAddress address : sorted) {
+            if (address.getAddress() > nextAddress) {
+                toMove.put(address, nextAddress);
+            }
+            nextAddress += address.getSize();
+        }
+        if (toMove.size() > 0) {
+            move(addressMap, toMove);
+            System.out.println("Slim, after: " + invert(addressMap));
+        } else System.out.println("Slim not needed");
+
+    }
+
+    private void move(Map<Team, TopAndBottomAddress> addressMap, SortedMap<SizedAddress, Integer> toMove) throws IOException {
+        moveData(addressMap, toMove);
+        movePointers(addressMap, toMove);
+        updateAddressMapWithMovement(addressMap, toMove);
+    }
+
+    private void updateAddressMapWithMovement(Map<Team, TopAndBottomAddress> addressMap, Map<SizedAddress, Integer> moved) {
+        for (Team team : addressMap.keySet()) {
+            SizedAddress topAddress = addressMap.get(team).getTopAddress();
+            SizedAddress bottomAddress = addressMap.get(team).getBottomAddress();
+            Integer movedTop = moved.get(topAddress);
+            Integer movedBottom = moved.get(bottomAddress);
+            if (movedTop == null) movedTop = topAddress.getAddress();
+            if (movedBottom == null) movedBottom = bottomAddress.getAddress();
+            addressMap.put(team, new TopAndBottomAddress(
+                    new SizedAddress(movedTop, topAddress.getSize()),
+                    new SizedAddress(movedBottom, bottomAddress.getSize())));
+        }
+    }
+
+
+    public void slim(Map<Team, TopAndBottomAddress> addressMap) throws IOException {
+        slim(addressMap, minimumAddress(addressMap).getAddress());
     }
 
 
@@ -83,9 +202,16 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
     }
 
     private SizedAddress maximumAddress(Map<Team, TopAndBottomAddress> addressMap) {
-        return maximumAddress(Stream.concat(
+        return maximumAddress(concat(
                 addressMap.values().stream().map(TopAndBottomAddress::getTopAddress),
                 addressMap.values().stream().map(TopAndBottomAddress::getBottomAddress)));
+    }
+
+    private SizedAddress minimumAddress(Map<Team, TopAndBottomAddress> addressMap) {
+        return minimumAddress(concat(
+                addressMap.values().stream().map(TopAndBottomAddress::getTopAddress),
+                addressMap.values().stream().map(TopAndBottomAddress::getBottomAddress))
+        );
     }
 
 
@@ -94,7 +220,7 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
         int maximumAddress = 0;
         SizedAddress maximumSizedAddress = null;
         for (SizedAddress address : sizedAddresses) {
-            if(address.getAddress() > maximumAddress) {
+            if (address.getAddress() > maximumAddress) {
                 maximumAddress = address.getAddress();
                 maximumSizedAddress = address;
             }
@@ -102,6 +228,18 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
         return maximumSizedAddress;
     }
 
+    private SizedAddress minimumAddress(Stream<SizedAddress> addresses) {
+        SizedAddress[] sizedAddresses = addresses.toArray(SizedAddress[]::new);
+        int minumumAddress = Integer.MAX_VALUE;
+        SizedAddress minumumSizedAddress = null;
+        for (SizedAddress address : sizedAddresses) {
+            if (address.getAddress() < minumumAddress) {
+                minumumAddress = address.getAddress();
+                minumumSizedAddress = address;
+            }
+        }
+        return minumumSizedAddress;
+    }
 
 
     @Override
@@ -136,36 +274,78 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
         SizedAddress oldAddressToMovePointer = null;
         if (topAddress >= bottomAddress) {
             oldAddressToMovePointer = teamAddress.getTopAddress();
-            newAddressToMovePointer = new SizedAddress(topAddress + newBottomSize - bottomSize, newTopSize);
-            newAddresses = new TopAndBottomAddress(newAddressToMovePointer, new SizedAddress(bottomAddress, newBottomSize));
+            SizedAddress newTopAddress = new SizedAddress(topAddress + newBottomSize - bottomSize, newTopSize);
+            SizedAddress newBottomAddress = new SizedAddress(bottomAddress, newBottomSize);
+            newAddressToMovePointer = newTopAddress;
+            newAddresses = new TopAndBottomAddress(newTopAddress, newBottomAddress);
         } else {
             oldAddressToMovePointer = teamAddress.getBottomAddress();
-            int deltaGermany = newTopSize - topSize;
-            System.out.println("deltagermany t = " + deltaGermany + " = " + newTopSize + " - " + topSize);
-            System.out.println("deltagermany b = " + (newBottomSize-bottomSize) + " = " + newBottomSize + " - " + bottomSize);
-
-            newAddressToMovePointer = new SizedAddress(bottomAddress + deltaGermany, newTopSize);
-            newAddresses = new TopAndBottomAddress(new SizedAddress(topAddress, newTopSize), newAddressToMovePointer);
+            SizedAddress newTopAddress = new SizedAddress(topAddress, newTopSize);
+            SizedAddress newBottomAddress = new SizedAddress(bottomAddress + newTopSize - topSize, newBottomSize);
+            newAddressToMovePointer = newBottomAddress;
+            newAddresses = new TopAndBottomAddress(newTopAddress, newBottomAddress);
         }
 
-        Map<SizedAddress, Integer> addressesToMove = addressesAfter(addressMap, teamAddress, newAddresses);
-        Map<Integer, byte[]> movingData = readMovingData(addressMap, addressesToMove);
-        moveData(movingData);
+        checkMaximumAddress(newAddressToMovePointer.getAddress(), newAddressToMovePointer.getSize());
+
+
+        Map<SizedAddress, Integer> toMove = addressesAfter(addressMap, teamAddress, newAddresses);
+        moveData(addressMap, toMove);
         //move also current team pointer
-        addressesToMove.put(oldAddressToMovePointer, newAddressToMovePointer.getAddress());
-        movePointers(addressMap, addressesToMove);
+        toMove.put(oldAddressToMovePointer, newAddressToMovePointer.getAddress());
+        movePointers(addressMap, toMove);
+        updateAddressMapWithMovement(addressMap, toMove);
 
         //write new content
         byte[] top = Files.asByteSource(compressedTop).read();
         System.out.println("writing treated data to " + team);
-        FileUtils.writeToPosition(rom, top,
-                newAddresses.getTopAddress().getAddress());
+        writeToPosition(newAddresses.getTopAddress().getAddress(), top);
         byte[] bottom = Files.asByteSource(compressedBottom).read();
         System.out.println(bottom.length);
-        FileUtils.writeToPosition(rom, bottom,
-                newAddresses.getBottomAddress().getAddress());
+        int address = newAddresses.getBottomAddress().getAddress();
+        writeToPosition(address, bottom);
 
+        List<Team> teams = teamsSharing(team, addressMap);
+        for (Team teamSharing : teams) {
+            addressMap.put(teamSharing, newAddresses);
+        }
+        slim(addressMap);
+        fixSharedPointersIfNecessary();
+    }
 
+    private void writeToPosition(int address, byte[] data) throws IOException {
+        checkMaximumAddress(address, data.length);
+        FileUtils.writeToPosition(rom, data,
+                address);
+    }
+
+    private void checkMaximumAddress(int address, int length) {
+        if (address + length > maximumAddress) {
+            throw new RuntimeException("Not enough space. Can't write to position: " + Integer.toHexString(address + length));
+        }
+    }
+
+    private void checkMaximumAddress(SizedAddress address) {
+        checkMaximumAddress(address.getAddress(), address.getSize());
+    }
+
+    private void fixSharedPointersIfNecessary() throws IOException {
+
+        int offset1 = 0x39D78;
+        byte[] data = Resources.asByteSource(Resources.getResource("39D78")).read();
+        byte[] currentData = Files.asByteSource(rom).slice(offset1, data.length).read();
+        if (!Arrays.equals(currentData, data)) writeToPosition(offset1, data);
+
+        int offset2 = 0x444EB;
+        data = Resources.asByteSource(Resources.getResource("444EB")).read();
+        currentData = Files.asByteSource(rom).slice(offset2, data.length).read();
+        if (!Arrays.equals(currentData, data)) writeToPosition(offset2, data);
+
+    }
+
+    private void moveData(Map<Team, TopAndBottomAddress> addressMap, Map<SizedAddress, Integer> addressesToMove) throws IOException {
+        Map<Integer, byte[]> movingData = readMovingData(addressMap, addressesToMove);
+        moveData(movingData);
     }
 
     private void movePointers(Map<Team, TopAndBottomAddress> addressMap, Map<SizedAddress, Integer> addressesToMove) throws IOException {
@@ -185,8 +365,12 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
     }
 
     private void moveData(Map<Integer, byte[]> movingData) throws IOException {
-        for (Integer address : movingData.keySet()) {
-            FileUtils.writeToPosition(rom, movingData.get(address), address);
+        if (movingData.size() > 0) {
+            int lastAddress = movingData.keySet().stream().sorted(Comparator.reverseOrder()).findFirst().get();
+            checkMaximumAddress(lastAddress, movingData.get(lastAddress).length);
+            for (Integer address : movingData.keySet()) {
+                writeToPosition(address, movingData.get(address));
+            }
         }
     }
 
@@ -233,7 +417,7 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
                 if (displacement > 0) {
                     int newAddress = bottomAddress.getAddress() + displacement;
                     addresses.put(bottomAddress, newAddress);
-                    System.out.println("displacement greater then zero for bottom of " + entry.getKey() + " displacement = " + displacement + " from " + Integer.toHexString(bottomAddress.getAddress()) + " to " + Integer.toHexString(newAddress)) ;
+                    System.out.println("displacement greater then zero for bottom of " + entry.getKey() + " displacement = " + displacement + " from " + Integer.toHexString(bottomAddress.getAddress()) + " to " + Integer.toHexString(newAddress));
 
                 }
             }
@@ -250,105 +434,23 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
                 if (displacement > 0) {
                     int newAddress = topAddress.getAddress() + displacement;
                     addresses.put(topAddress, newAddress);
-                    System.out.println("displacement greater then zero for top of " + entry.getKey() + " displacement = " + displacement + " from " + Integer.toHexString(topAddress.getAddress()) + " to " + Integer.toHexString(newAddress)) ;
-
+                    //System.out.println("displacement greater then zero for top of " + entry.getKey() + " displacement = " + displacement + " from " + Integer.toHexString(topAddress.getAddress()) + " to " + Integer.toHexString(newAddress));
                 }
             }
         }
         return addresses;
     }
 
-      /*
-    private void writeDisplacementsToRom(Map<Team, TopAndBottomAddress> beforeMap, Map<Team, TopAndBottomAddress> displacements) throws IOException {
-        Map<Team, byte[]> topContents = new HashMap<>();
-        Map<Team, byte[]> bottomContents = new HashMap<>();
-
-        for (Team team : displacements.keySet()) {
-            long topOffset = POINTER_OFFSET + POINTER_STEP * team.ordinal();
-            long bottomOffset = topOffset + 2;
-            TopAndBottomAddress addresses = displacements.get(team);
-            writeAdressToPointer(topOffset, addresses.getTopAddress().getAddress());
-            writeAdressToPointer(bottomOffset, addresses.getBottomAddress().getAddress());
+    public Multimap<SizedAddress, Team> invert(Map<Team, TopAndBottomAddress> addressMap) {
+        Multimap<SizedAddress, Team> map = MultimapBuilder.treeKeys().linkedListValues().build();
+        for (Team team : addressMap.keySet()) {
+            TopAndBottomAddress addresses = addressMap.get(team);
+            map.put(addresses.getTopAddress(), team);
+            map.put(addresses.getBottomAddress(), team);
         }
-
-        for (Team team : displacements.keySet()) {
-            TopAndBottomAddress beforeAddress = beforeMap.get(team);
-            SizedAddress topAddress = beforeAddress.getTopAddress();
-            topContents.put(team,
-                    Files.asByteSource(rom).slice(topAddress.getAddress(), topAddress.getSize()).read()
-            );
-            SizedAddress bottomAddress = beforeAddress.getBottomAddress();
-            bottomContents.put(team,
-                    Files.asByteSource(rom).slice(bottomAddress.getAddress(), bottomAddress.getSize()).read()
-            );
-        }
-
-        for (Team team : displacements.keySet()) {
-            TopAndBottomAddress displacedAddress = displacements.get(team);
-            byte[] data = topContents.get(team);
-
-            int address = displacedAddress.getTopAddress().getAddress();
-            //System.out.println("writing " + team + " top 0x" + Integer.toHexString(address) + ": " + ParsingUtils.bytesString(data));
-            FileUtils.writeToPosition(rom, data, address);
-            FileUtils.writeToPosition(rom, bottomContents.get(team), displacedAddress.getBottomAddress().getAddress());
-        }
+        return map;
     }
-        */
-    /*
-private Map<Team, TopAndBottomAddress> displaceAddressMap(Map<Team, TopAndBottomAddress> addressMap, Team movingTeam, int newTopSize, int newBottomSize) throws IOException {
-   Map<Team, TopAndBottomAddress> displaced = new HashMap<>();
-   TopAndBottomAddress oldAddress = addressMap.get(movingTeam);
-   int topDelta = newTopSize - oldAddress.getTopAddress().getSize();
-   int bottomDelta = newBottomSize - oldAddress.getBottomAddress().getSize();
-   for (Team currentTeam : Team.values()) {
-       TopAndBottomAddress teamAddresses = addressMap.get(currentTeam);
-       System.out.println("\n" + currentTeam);
-       System.out.println("before: " + teamAddresses);
-       int topAddress = teamAddresses.getTopAddress().getAddress();
-       int bottomAddress = teamAddresses.getBottomAddress().getAddress();
-       int topSize = teamAddresses.getTopAddress().getSize();
-       int bottomSize = teamAddresses.getBottomAddress().getSize();
 
-       //same address - change all pointers sizes
-       if (teamAddresses.getTopAddress().getAddress() == oldAddress.getTopAddress().getAddress()) {
-           topSize = newTopSize;
-       }
-       if (teamAddresses.getBottomAddress().getAddress() == oldAddress.getBottomAddress().getAddress()) {
-           bottomSize = newBottomSize;
-       }
-
-       //greater or same address - displace
-       if (teamAddresses.getTopAddress().getAddress() > oldAddress.getTopAddress().getAddress()) {
-           topAddress += topDelta;
-       }
-       if (teamAddresses.getTopAddress().getAddress() > oldAddress.getBottomAddress().getAddress()) {
-           topAddress += bottomDelta;
-       }
-       if (teamAddresses.getBottomAddress().getAddress() > oldAddress.getTopAddress().getAddress()) {
-           bottomAddress += topDelta;
-       }
-       if (teamAddresses.getBottomAddress().getAddress() > oldAddress.getBottomAddress().getAddress()) {
-           bottomAddress += bottomDelta;
-       }
-
-       TopAndBottomAddress after = new TopAndBottomAddress(
-               new SizedAddress(topAddress, topSize),
-               new SizedAddress(bottomAddress, bottomSize));
-
-
-       if (after.getBottomAddress().getAddress() != (teamAddresses.getBottomAddress().getAddress()) &&
-               after.getTopAddress().getAddress() != teamAddresses.getTopAddress().getAddress()) {
-           displaced.put(currentTeam, after);
-       }
-
-
-       addressMap.put(currentTeam, after);
-       System.out.println("after:" + after);
-   }
-   writeDisplacementsToRom(addressMap, displaced);
-   //moving team mudar o ponteiro
-}
- */
     private void writeAdressToPointer(long pointerOffset, int newAdress) throws IOException {
         FileUtils.writeToPosition(rom, addressToSnes(newAdress), pointerOffset);
     }
@@ -439,8 +541,11 @@ private Map<Team, TopAndBottomAddress> displaceAddressMap(Map<Team, TopAndBottom
     }
 
     public static void main(String[] args) throws IOException {
+       /* FlagDesignRomHandler handler = new FlagDesignRomHandler(new File("iss.sfc"));
+        handler.unlinkFlag(Team.GERMANY);     */
         FlagDesignRomHandler handler = new FlagDesignRomHandler(new File("iss.sfc"));
-        handler.writeToRomAt(Team.GERMANY, handler.readFromRomAt(Team.WALES));
+        handler.slim(handler.readAddressMap());
+        System.out.println(handler.invert(handler.readAddressMap()));
     }
 
     private static FlagSnes4bpp serialize(FlagDesign flagDesign) {
@@ -547,7 +652,7 @@ private Map<Team, TopAndBottomAddress> displaceAddressMap(Map<Team, TopAndBottom
         }
     }
 
-    private class SizedAddress {
+    private class SizedAddress implements Comparable<SizedAddress> {
         private final int address;
         private final int size;
 
@@ -591,6 +696,13 @@ private Map<Team, TopAndBottomAddress> displaceAddressMap(Map<Team, TopAndBottom
                     "address=" + Integer.toHexString(address) +
                     ", size=" + Integer.toHexString(size) +
                     '}';
+        }
+
+
+        @Override
+        public int compareTo(SizedAddress o) {
+            int compare = Integer.valueOf(this.getAddress()).compareTo(o.getAddress());
+            return (compare == 0) ? Integer.valueOf(this.getSize()).compareTo(o.getSize()) : compare;
         }
     }
 

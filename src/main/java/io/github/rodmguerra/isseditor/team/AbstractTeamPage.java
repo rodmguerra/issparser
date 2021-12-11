@@ -44,6 +44,10 @@ public abstract class AbstractTeamPage<T> extends AbstractRomView<T> implements 
         this.teamListener = teamListener;
     }
 
+    protected RomHandler.Team getCurrentTeam() {
+        return RomHandler.Team.at(teamCombo.getSelectedIndex());
+    }
+
     public AbstractTeamPage() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

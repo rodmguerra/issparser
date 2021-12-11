@@ -26,7 +26,7 @@ public class FlagColorPage extends AbstractTeamPage<ColoredPart> {
         layout.setAlignOnBaseline(true);
         innerPanel.setLayout(layout);
         if(view == null) view = ColoredPartView.zero(4);
-        innerPanel.add(panelForPart("Flag colors (first color is also used in shirt details)", view));
+        innerPanel.add(panelForPart("Flag colors", view));
         return innerPanel;
     }
 
@@ -44,6 +44,7 @@ public class FlagColorPage extends AbstractTeamPage<ColoredPart> {
             rgbPanel.add(partRgb.getGreen());
             rgbPanel.add(partRgb.getBlue());
             partPanel.add(rgbPanel);
+            partPanel.setToolTipText("Color 1 is also used for player number on shirt");
         }
 
         partPanel.setBorder(BorderFactory.createTitledBorder(partName));
