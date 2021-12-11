@@ -5,16 +5,19 @@ import io.github.rodmguerra.issparser.commons.RomHandler;
 import io.github.rodmguerra.issparser.model.colors.ColoredPart;
 
 import java.util.List;
+import java.util.Set;
+
+import static com.google.common.collect.Sets.newLinkedHashSet;
 
 public class Flag {
     private final FlagDesign design;
     private final ColoredPart colors;
-    private final List<RomHandler.Team> teamsUsing;
+    private final Set<RomHandler.Team> teamsUsing;
 
-    public Flag(FlagDesign design, ColoredPart colors, List<RomHandler.Team> teamsUsing) {
+    public Flag(FlagDesign design, ColoredPart colors, Iterable<RomHandler.Team> teamsUsing) {
         this.design = design;
         this.colors = colors;
-        this.teamsUsing = teamsUsing;
+        this.teamsUsing = newLinkedHashSet(teamsUsing);
     }
 
     public FlagDesign getDesign() {
@@ -25,7 +28,7 @@ public class Flag {
         return colors;
     }
 
-    public List<RomHandler.Team> getTeamsUsing() {
+    public Set<RomHandler.Team> getTeamsUsing() {
         return teamsUsing;
     }
 }

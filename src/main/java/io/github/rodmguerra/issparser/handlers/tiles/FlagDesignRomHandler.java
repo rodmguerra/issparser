@@ -1,11 +1,12 @@
 package io.github.rodmguerra.issparser.handlers.tiles;
 
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
-import com.google.common.io.Resources;
 import io.github.rodmguerra.issparser.commons.FileUtils;
 import io.github.rodmguerra.issparser.commons.RomHandler;
 import io.github.rodmguerra.issparser.model.FlagDesign;
@@ -13,12 +14,12 @@ import io.github.rodmguerra.issparser.model.FlagSnes4bpp;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import static io.github.rodmguerra.issparser.commons.ParsingUtils.bytesString;
-import static java.util.Collections.reverseOrder;
+import static com.google.common.collect.Lists.newArrayList;
+import static io.github.rodmguerra.issparser.commons.RomUtils.*;
 import static java.util.stream.Stream.concat;
 
 public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
@@ -26,7 +27,7 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
     private final File rom;
     private static final long POINTER_OFFSET = 0x941a;
     private static final long POINTER_STEP = 4;
-    private int maximumAddress = 0x483FD;
+    private int maximumAddress = 0x489CD;//0x483FD;
 
     public FlagDesignRomHandler(File rom) {
         this.rom = rom;
@@ -42,22 +43,17 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public int readPointer(long pointerOffset) throws IOException {
-        byte[] bytes = Files.asByteSource(rom).slice(pointerOffset, 2).read();
-        return addressFromSnes(bytes[0], bytes[1]);
-    }
-
     @Override
     public FlagDesign readFromRomAt(Team team) throws IOException {
         int topOffset = readPointerAt(team);
-        int bottomOffset = readPointer(pointerOffset(team) + 2);
+        int bottomOffset = readPointer(rom, pointerOffset(team) + 2);
         FlagDesign.Color[][] flagTop = readFlagPart(topOffset);
         FlagDesign.Color[][] flagBottom = readFlagPart(bottomOffset);
         return new FlagDesign(joinFlagParts(flagTop, flagBottom));
     }
 
     private int readPointerAt(Team team) throws IOException {
-        return readPointer(pointerOffset(team));
+        return readPointer(rom, pointerOffset(team));
     }
 
     public List<Team> teamsSharing(Team team) throws IOException {
@@ -93,10 +89,17 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
         return flag;
     }
 
+
+
     public void unlinkFlag(Team team) throws IOException {
+        System.out.println("Unlink flag " + team);
         Map<Team, TopAndBottomAddress> addressMap = readAddressMap();
         List<Team> teams = teamsSharing(team, addressMap);
-        if (teams.size() <= 1) return;
+        if (teams.size() <= 1) {
+            System.out.println("Unlink flag " + team + " is not necessary");
+            return;
+        }
+        displaceTeamNameTilesIfNecessary(rom);
         slim(addressMap);
 
         //read current data
@@ -112,18 +115,20 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
         int newBottomAddress = newTopAddress + topData.length;
 
         //write bottom address first so it will throw an exception if size overflows available space
-        writeToPosition(newBottomAddress, bottomData);
-        writeToPosition(newTopAddress, topData);
+        writeToPositionChecked(newBottomAddress, bottomData);
+        writeToPositionChecked(newTopAddress, topData);
         writeTopPointerAt(team, newTopAddress);
         writeBottomPointerAt(team, newBottomAddress);
+
+        System.out.println("Unlink flag " + team + " - success");
     }
 
     private void writeTopPointerAt(Team team, int address) throws IOException {
-        writeAdressToPointer(pointerOffset(team), address);
+        writeAdressToPointer(rom, pointerOffset(team), address);
     }
 
     private void writeBottomPointerAt(Team team, int address) throws IOException {
-        writeAdressToPointer(pointerOffset(team) + 2, address);
+        writeAdressToPointer(rom, pointerOffset(team) + 2, address);
     }
 
     private void writePointersAt(Team team, TopAndBottomAddress adresses) throws IOException {
@@ -133,6 +138,7 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
 
 
     public void linkTeams(Team[] fromTeams, Team toTeam) throws IOException {
+        System.out.println("Linking teams " + Joiner.on(", ").join(fromTeams) + " to " + toTeam);
         Map<Team, TopAndBottomAddress> addressMap = readAddressMap();
         int firstAddress = minimumAddress(addressMap).getAddress();
         for (Team fromTeam : fromTeams) {
@@ -141,6 +147,8 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
             addressMap.put(fromTeam, toTeamAddresses);
         }
         slim(addressMap, firstAddress);
+        System.out.println("Linking teams " + " to " + toTeam + " - success");
+
     }
 
     /**
@@ -150,7 +158,7 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
      * @param firstAddress
      */
     private void slim(Map<Team, TopAndBottomAddress> addressMap, int firstAddress) throws IOException {
-        System.out.println("Slim, before: " + invert(addressMap));
+        System.out.println("Slim: " + invert(addressMap));
         SortedSet<SizedAddress> sorted = new TreeSet<>();
         SortedMap<SizedAddress, Integer> toMove = new TreeMap<>();
         for (TopAndBottomAddress addresses : addressMap.values()) {
@@ -166,7 +174,7 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
         }
         if (toMove.size() > 0) {
             move(addressMap, toMove);
-            System.out.println("Slim, after: " + invert(addressMap));
+            System.out.println("Slim - success: " + invert(addressMap));
         } else System.out.println("Slim not needed");
 
     }
@@ -242,23 +250,36 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
     }
 
 
+    public void writeToRomAt(Team team, Iterable<Team> teams, FlagDesign input) throws IOException {
+        System.out.println("Write flag design to rom at " + teams);
+        displaceTeamNameTilesIfNecessary(rom);
+        linkTeams(Iterables.toArray(teams, Team.class), team); //liga com os novos que estão juntando, liberando o espaço deles
+        unlinkFlag(team); //Separa o time dos atuais que estão juntos
+        linkTeams(Iterables.toArray(teams, Team.class), team);  //liga novamente com os novos que estão juntando, separando dos demais;
+        writeToRomAt(team, input); //escreve no novo (com todos juntos)
+    }
+
     @Override
     public void writeToRomAt(Team team, FlagDesign input) throws IOException {
+        System.out.println("Write flag design to rom at " + team);
+        displaceTeamNameTilesIfNecessary(rom);
         FlagSnes4bpp flagSnes = serialize(input);
-        File compressedTop = new File("top.bin");
-        File compressedBottom = new File("bottom.bin");
+        File folder = new File("temp");
+        folder.mkdir();
+        File compressedTop = new File("temp" + File.separator + "top.bin");
+        File compressedBottom = new File("temp" + File.separator + "bottom.bin");
         Process topCompression = compressDataToFile(flagSnes.getTop(), compressedTop);
         Process bottomCompression = compressDataToFile(flagSnes.getBottom(), compressedBottom);
         Map<Team, TopAndBottomAddress> addressMap = readAddressMap();
         int newTopSize = 0;
         int newBottomSize = 0;
         try {
-            if (topCompression.waitFor() == 0) {
+            if (topCompression.waitFor(5, TimeUnit.SECONDS) && topCompression.exitValue() == 0) {
                 newTopSize = (int) Files.asByteSource(compressedTop).size();
-            } else throw new RuntimeException("Failed to compress flag design bytes of top: " + team);
-            if (bottomCompression.waitFor() == 0) {
+            } else throw new RuntimeException("Konami compressor could not compress flag top: " + team);
+            if (bottomCompression.waitFor(5, TimeUnit.SECONDS) && bottomCompression.exitValue() == 0) {
                 newBottomSize = (int) Files.asByteSource(compressedBottom).size();
-            } else throw new RuntimeException("Failed to compress flag design bytes of bottom: " + team);
+            } else throw new RuntimeException("Konami compressor could not compress flag bottom: " + team);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -286,7 +307,7 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
             newAddresses = new TopAndBottomAddress(newTopAddress, newBottomAddress);
         }
 
-        checkMaximumAddress(newAddressToMovePointer.getAddress(), newAddressToMovePointer.getSize());
+        checkMaximumAddress(newAddressToMovePointer);
 
 
         Map<SizedAddress, Integer> toMove = addressesAfter(addressMap, teamAddress, newAddresses);
@@ -298,26 +319,28 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
 
         //write new content
         byte[] top = Files.asByteSource(compressedTop).read();
-        System.out.println("writing treated data to " + team);
-        writeToPosition(newAddresses.getTopAddress().getAddress(), top);
+        //System.out.println("writing treated data to " + team);
+        writeToPositionChecked(newAddresses.getTopAddress().getAddress(), top);
         byte[] bottom = Files.asByteSource(compressedBottom).read();
         System.out.println(bottom.length);
         int address = newAddresses.getBottomAddress().getAddress();
-        writeToPosition(address, bottom);
+        writeToPositionChecked(address, bottom);
 
         List<Team> teams = teamsSharing(team, addressMap);
         for (Team teamSharing : teams) {
             addressMap.put(teamSharing, newAddresses);
         }
         slim(addressMap);
-        fixSharedPointersIfNecessary();
+        fixSharedPointersIfNecessary(rom);
+        System.out.println("Write flag design to rom at " + team + "success!");
     }
 
-    private void writeToPosition(int address, byte[] data) throws IOException {
+    private void writeToPositionChecked(int address, byte[] data) throws IOException {
         checkMaximumAddress(address, data.length);
         FileUtils.writeToPosition(rom, data,
                 address);
     }
+
 
     private void checkMaximumAddress(int address, int length) {
         if (address + length > maximumAddress) {
@@ -327,20 +350,6 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
 
     private void checkMaximumAddress(SizedAddress address) {
         checkMaximumAddress(address.getAddress(), address.getSize());
-    }
-
-    private void fixSharedPointersIfNecessary() throws IOException {
-
-        int offset1 = 0x39D78;
-        byte[] data = Resources.asByteSource(Resources.getResource("39D78")).read();
-        byte[] currentData = Files.asByteSource(rom).slice(offset1, data.length).read();
-        if (!Arrays.equals(currentData, data)) writeToPosition(offset1, data);
-
-        int offset2 = 0x444EB;
-        data = Resources.asByteSource(Resources.getResource("444EB")).read();
-        currentData = Files.asByteSource(rom).slice(offset2, data.length).read();
-        if (!Arrays.equals(currentData, data)) writeToPosition(offset2, data);
-
     }
 
     private void moveData(Map<Team, TopAndBottomAddress> addressMap, Map<SizedAddress, Integer> addressesToMove) throws IOException {
@@ -354,12 +363,12 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
             SizedAddress topAddress = addressMap.get(team).getTopAddress();
             if (addressesToMove.containsKey(topAddress)) {
                 System.out.println("moving top pointer of: " + team);
-                writeAdressToPointer(pointerOffset, addressesToMove.get(topAddress));
+                writeAdressToPointer(rom, pointerOffset, addressesToMove.get(topAddress));
             }
             SizedAddress bottomAddress = addressMap.get(team).getBottomAddress();
             if (addressesToMove.containsKey(bottomAddress)) {
                 System.out.println("moving bottom pointer of: " + team);
-                writeAdressToPointer(2 + pointerOffset, addressesToMove.get(bottomAddress));
+                writeAdressToPointer(rom, 2 + pointerOffset, addressesToMove.get(bottomAddress));
             }
         }
     }
@@ -369,7 +378,7 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
             int lastAddress = movingData.keySet().stream().sorted(Comparator.reverseOrder()).findFirst().get();
             checkMaximumAddress(lastAddress, movingData.get(lastAddress).length);
             for (Integer address : movingData.keySet()) {
-                writeToPosition(address, movingData.get(address));
+                writeToPositionChecked(address, movingData.get(address));
             }
         }
     }
@@ -396,7 +405,6 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
         }
         return contentToWrite;
     }
-
 
     private Map<SizedAddress, Integer> addressesAfter(Map<Team, TopAndBottomAddress> addressMap, TopAndBottomAddress old, TopAndBottomAddress aNew) {
         Map<SizedAddress, Integer> addresses = new HashMap<>();
@@ -451,39 +459,34 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
         return map;
     }
 
-    private void writeAdressToPointer(long pointerOffset, int newAdress) throws IOException {
-        FileUtils.writeToPosition(rom, addressToSnes(newAdress), pointerOffset);
-    }
-
     private Process compressDataToFile(byte[] bytes, File file) throws IOException {
         String comp = file.getAbsolutePath();
         String decomp = file.getAbsolutePath() + ".decomp";
         Files.write(bytes, new File(decomp));
 
-        String command = "konami\\konami_c \"" + decomp + "\" \"" + comp + "\" 0";
+        String command = "konami\\konami_c \"" + decomp + "\" \"" + comp + "\" 1";
+        System.out.println(command);
         return Runtime.getRuntime().exec(command, null);
     }
 
-    private static int addressFromSnes(byte pointerByte1, byte pointerByte2) {
-        return ByteBuffer.wrap(new byte[]{0, 0x4, pointerByte2, pointerByte1}).getInt();
-    }
-
-    private static byte[] addressToSnes(int address) {
-        address = address % 0x40000;
-        return new byte[]{(byte) (address % 0x100), (byte) (address / 0x100)};
-    }
-
-
     private FlagDesign.Color[][] readFlagPart(int offset) throws IOException {
-        String command = "konami\\konami_d \"" + rom.getAbsolutePath() + "\" 0x" + Integer.toHexString(offset) + " 0";
+        String command = "konami\\konami_d \"" + rom.getAbsolutePath() + "\" 0x" + Integer.toHexString(offset) + " 1";
         System.out.println(command);
 
         Process process = Runtime.getRuntime().exec(command, null);
         try {
-            if (process.waitFor() == 0) {
-                byte[] bytes = Files.asByteSource(new File("decomp.bin")).read();
-                System.out.println("Flag part: " + bytesString(bytes));
-                return bytesToMatrix(bytes);
+            if (process.waitFor(10, TimeUnit.SECONDS) && process.exitValue() == 0) {
+                File decomp = new File("decomp.bin");
+                byte[] bytes = Files.asByteSource(decomp).read();
+                //System.out.println("Flag part: " + bytesString(bytes));
+                FlagDesign.Color[][] colors = bytesToMatrix(bytes);
+                try {
+                    decomp.delete();
+                } catch (Exception e) {
+                    System.out.println("Warning: could not delete " + decomp.getAbsolutePath());
+                }
+                return colors;
+
             } else throw new RuntimeException("Failed to run konami decompressor");
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -592,11 +595,11 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
         Map<Team, TopAndBottomAddress> map = new HashMap<>();
         for (Team team : Team.values()) {
             long offset = pointerOffset(team);
-            int topAddress = readPointer(offset);
+            int topAddress = readPointer(rom, offset);
             ByteSource source = Files.asByteSource(rom);
             int topSize = source.slice(topAddress, 1).read()[0];
             SizedAddress top = new SizedAddress(topAddress, topSize);
-            int bottomAddress = readPointer(offset + 2);
+            int bottomAddress = readPointer(rom, offset + 2);
             int bottomSize = source.slice(bottomAddress, 1).read()[0];
             SizedAddress bottom = new SizedAddress(bottomAddress, bottomSize);
             map.put(team, new TopAndBottomAddress(top, bottom));
@@ -604,7 +607,6 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
         }
         return map;
     }
-
 
     private class TopAndBottomAddress {
         private final SizedAddress topAddress;
@@ -698,13 +700,10 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
                     '}';
         }
 
-
         @Override
         public int compareTo(SizedAddress o) {
             int compare = Integer.valueOf(this.getAddress()).compareTo(o.getAddress());
             return (compare == 0) ? Integer.valueOf(this.getSize()).compareTo(o.getSize()) : compare;
         }
     }
-
-
 }

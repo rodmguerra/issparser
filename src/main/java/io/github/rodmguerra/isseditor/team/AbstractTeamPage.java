@@ -20,7 +20,7 @@ public abstract class AbstractTeamPage<T> extends AbstractRomView<T> implements 
     protected Runnable readListener;
     protected Consumer<RomHandler.Team> teamListener;
 
-    private JPanel panel;
+    protected JPanel panel;
     protected JComboBox<String> teamCombo;
     private JComboBox<String> resourceCombo;
 
@@ -93,15 +93,17 @@ public abstract class AbstractTeamPage<T> extends AbstractRomView<T> implements 
         JPanel reloadPanel = new JPanel(new GridLayout(1,1));
         reloadPanel.add(reloadButton);
         panel.add(reloadPanel);
+        JPanel savePanel = new JPanel(new GridLayout(1,1));
+
 
         panel.add(innerPannel());
+        panel.add(savePanel);
 
           /* Save */
         JButton saveButton = new JButton("Save to ROM");
         saveButton.addActionListener(e -> saveListener.accept(getData()));
-        JPanel savePanel = new JPanel(new GridLayout(1,1));
         savePanel.add(saveButton);
-        panel.add(savePanel);
+
         this.panel = panel;
     }
 

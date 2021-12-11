@@ -21,6 +21,7 @@ public class FlagDesignController extends AbstractTeamController<Flag> {
 
     public FlagDesignController(Router router, FlagDesignPage view) {
         super(router, view);
+        /*
         view.onMoveOut(() -> {
             try {
                 RomHandler.Team team = router.getState().getTeam();
@@ -39,7 +40,9 @@ public class FlagDesignController extends AbstractTeamController<Flag> {
                 throw new RuntimeException(e);
             }
         });
+        */
     }
+
 
     @Override
     protected RomHandler<Flag> romHandlerFor(File rom) {

@@ -51,7 +51,7 @@ public class DesktopApp {
         frame.setLayout(grid);
         frame.setVisible(true);
         frame.setResizable(false);
-        frame.setTitle("rodmguerra - ISS Editor");
+        frame.setTitle("rodmguerra - ISS Studio 1.4-beta");
         router.navigate(Router.Route.HOME, new State());
     }
 

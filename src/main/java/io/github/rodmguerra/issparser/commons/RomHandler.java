@@ -43,7 +43,7 @@ public interface RomHandler<T> {
 
         @Override
         public String toString() {
-            return name;
+            return String.format("%02d", ordinal() + 1) + ". " + name;
         }
     }
 

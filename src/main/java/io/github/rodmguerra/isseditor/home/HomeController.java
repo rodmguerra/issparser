@@ -35,7 +35,7 @@ public class HomeController extends AbstractController {
             }
         });
         innerPanel.add(Box.createRigidArea(new Dimension(50, 50)));
-        innerPanel.add(new JLabel("Rodmguerra's ISS Editor"));
+        innerPanel.add(new JLabel("Rodmguerra's ISS Studio v1.4-beta"));
         innerPanel.add(Box.createRigidArea(new Dimension(50, 10)));
         innerPanel.add(openRomButton);
         innerPanel.add(Box.createRigidArea(new Dimension(50, 50)));
