@@ -4,7 +4,7 @@
 - [Download](https://github.com/rodmguerra/issparser/releases/download/v1.4-beta/iss-studio-1.4-beta.zip) zip file, unzip it and run jar file (Required Java 8 or higher)
 
 #### Features ####
-- Flag design (new) (Windows required, for konami compressor/decompressor)
+- Flag design (new) (Required Windows, for konami compressor/decompressor)
 - Player names
 - Uniform colors (outfield and goalkeepers)
 - Hair and skin colors
