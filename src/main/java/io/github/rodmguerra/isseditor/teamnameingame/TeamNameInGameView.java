@@ -1,8 +1,8 @@
-package io.github.rodmguerra.isseditor.flagdesign;
+package io.github.rodmguerra.isseditor.teamnameingame;
 
 
-import com.google.common.collect.Maps;
-import io.github.rodmguerra.issparser.model.tiles.FlagDesign;
+import com.google.common.collect.ImmutableMap;
+import io.github.rodmguerra.issparser.model.tiles.TeamNameInGame;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -14,27 +14,25 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FlagDesignView {
-    private Map<FlagDesign.Color, Color> colors;
+public class TeamNameInGameView {
+    private Map<TeamNameInGame.Color, Color> colorMap = ImmutableMap.of(
+            TeamNameInGame.Color.COLOR_1, new Color(247,255,247),
+            TeamNameInGame.Color.COLOR_2, new Color(132,166,239),
+            TeamNameInGame.Color.COLOR_3, new Color(0,81,247),
+            TeamNameInGame.Color.TRANSPARENT, new Color(148,174,90));
 
-    private final JPanel[][] matrix = new JPanel[16][24];
-    private final JToggleButton[] buttons = new JToggleButton[FlagDesign.Color.values().length];
+    private final JPanel[][] matrix = new JPanel[8][32];
+    private final JToggleButton[] buttons = new JToggleButton[TeamNameInGame.Color.values().length];
     private final ButtonGroup buttonGroup = new ButtonGroup();
-    private final Map<ButtonModel, FlagDesign.Color> colorSelectors = new HashMap<>();
-    private final JButton teamsUsingLabel;
+    private final Map<ButtonModel, TeamNameInGame.Color> colorSelectors = new HashMap<>();
 
 
-    private FlagDesign model = new FlagDesign(new FlagDesign.Color[16][24]);
+    private TeamNameInGame model = new TeamNameInGame(new TeamNameInGame.Color[8][32]);
 
 
-    public FlagDesignView() {
-        teamsUsingLabel = new JButton("Teste");
-        FlagDesign.Color[] colorValues = FlagDesign.Color.values();
-        colors = Maps.newEnumMap(FlagDesign.Color.class);
+    public TeamNameInGameView() {
+        TeamNameInGame.Color[] colorValues = TeamNameInGame.Color.values();
 
-        for (FlagDesign.Color color : colorValues) {
-            colors.put(color, UIManager.getColor("Panel.background"));
-        }
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
                 matrix[i][j] = new JPanel();
@@ -70,9 +68,8 @@ public class FlagDesignView {
 
         int i = 0;
 
-        for (FlagDesign.Color color : colorValues) {
-            JToggleButton button = new JToggleButton(color == FlagDesign.Color.TRANSPARENT ?
-                    emptyImageIcon() : imageIcon(colors.get(color)));
+        for (TeamNameInGame.Color color : colorValues) {
+            JToggleButton button = new JToggleButton(imageIcon(color));
             buttonGroup.add(button);
             colorSelectors.put(button.getModel(), color);
             buttons[i++] = button;
@@ -82,39 +79,29 @@ public class FlagDesignView {
 
     private void paint(int row, int col) {
         JComponent component = matrix[row][col];
-        FlagDesign.Color selectedColor = getSelectedColor();
-        component.setForeground(colors.get(selectedColor));
-        component.setBackground(colors.get(selectedColor));
+        TeamNameInGame.Color selectedColor = getSelectedColor();
+        component.setForeground(colorMap.get(selectedColor));
+        component.setBackground(colorMap.get(selectedColor));
         model.getMatrix()[row][col] = selectedColor;
-        if (selectedColor == FlagDesign.Color.TRANSPARENT) {
+        if (selectedColor == TeamNameInGame.Color.TRANSPARENT) {
             component.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         } else {
             component.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
         }
     }
 
-    public void setFromModel(FlagDesign model) {
+    public void setFromModel(TeamNameInGame model) {
         this.model = model;
         updateGrid();
     }
 
-
-    public void setColor(FlagDesign.Color designColor, Color uiColor) {
-        this.colors.put(designColor, uiColor);
-        updateGrid();
-    }
-
-    public void setColors(Map<FlagDesign.Color, Color> colors) {
-        this.colors.putAll(colors);
-        updateGrid();
-    }
-
     private void updateGrid() {
-        FlagDesign.Color[][] modelMatrix = model.getMatrix();
+        TeamNameInGame.Color[][] modelMatrix = model.getMatrix();
         for (int i = 0; i < modelMatrix.length; i++) {
             for (int j = 0; j < modelMatrix[i].length; j++) {
-                matrix[i][j].setBackground(colors.get(modelMatrix[i][j]));
-                if (modelMatrix[i][j] == FlagDesign.Color.TRANSPARENT) {
+                Color bg = colorMap.get(modelMatrix[i][j]);
+                matrix[i][j].setBackground(bg);
+                if (modelMatrix[i][j] == TeamNameInGame.Color.TRANSPARENT) {
                     matrix[i][j].setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
                 } else {
                     matrix[i][j].setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
@@ -122,14 +109,14 @@ public class FlagDesignView {
             }
         }
         for (int i = 0; i < buttons.length; i++) {
-            FlagDesign.Color color = FlagDesign.Color.at(i);
-            if (color != FlagDesign.Color.TRANSPARENT) {
-                buttons[i].setIcon(imageIcon(colors.get(color)));
+            TeamNameInGame.Color color = TeamNameInGame.Color.at(i);
+            if (color != TeamNameInGame.Color.TRANSPARENT) {
+                buttons[i].setIcon(imageIcon(color));
             }
         }
     }
 
-    private FlagDesign.Color getSelectedColor() {
+    private TeamNameInGame.Color getSelectedColor() {
         return colorSelectors.get(buttonGroup.getSelection());
     }
 
@@ -137,7 +124,7 @@ public class FlagDesignView {
         return matrix;
     }
 
-    public FlagDesign toModel() {
+    public TeamNameInGame toModel() {
         return model;
     }
 
@@ -145,13 +132,17 @@ public class FlagDesignView {
         return buttons;
     }
 
-    private ImageIcon imageIcon(Color color) {
+    private ImageIcon imageIcon(TeamNameInGame.Color color) {
+        return imageIcon(colorMap.get(color), color == TeamNameInGame.Color.TRANSPARENT? Color.GRAY : Color.BLACK);
+    }
+
+    private ImageIcon imageIcon(Color color, Color rect) {
         BufferedImage image = new BufferedImage(40, 40, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = image.createGraphics();
 
         graphics.setPaint(color);
         graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
-        graphics.setPaint(Color.BLACK);
+        graphics.setPaint(rect);
         graphics.drawRect(0, 0, image.getWidth() - 1, image.getHeight() - 1);
 
         return new ImageIcon(image);
@@ -161,10 +152,7 @@ public class FlagDesignView {
         BufferedImage image = new BufferedImage(40, 40, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = image.createGraphics();
 
-        //
-        //
         graphics.setPaint(Color.GRAY);
-        //graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
 
         graphics.drawRect(0, 0, image.getWidth() - 1, image.getHeight() - 1);
 
@@ -178,10 +166,6 @@ public class FlagDesignView {
             }
         }
         return null;
-    }
-
-    public JButton getTeamsUsingLabel() {
-        return teamsUsingLabel;
     }
 
     private static class Coordinate {

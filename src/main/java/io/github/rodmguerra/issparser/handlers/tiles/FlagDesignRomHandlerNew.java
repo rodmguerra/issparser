@@ -4,7 +4,7 @@ package io.github.rodmguerra.issparser.handlers.tiles;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 import io.github.rodmguerra.issparser.commons.RomHandler;
-import io.github.rodmguerra.issparser.model.FlagDesign;
+import io.github.rodmguerra.issparser.model.tiles.FlagDesign;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +12,6 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import static io.github.rodmguerra.issparser.commons.ParsingUtils.bytesString;
 

@@ -1,6 +1,5 @@
 package io.github.rodmguerra.issparser.handlers.tiles;
 
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
@@ -9,8 +8,8 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 import io.github.rodmguerra.issparser.commons.FileUtils;
 import io.github.rodmguerra.issparser.commons.RomHandler;
-import io.github.rodmguerra.issparser.model.FlagDesign;
-import io.github.rodmguerra.issparser.model.FlagSnes4bpp;
+import io.github.rodmguerra.issparser.model.tiles.FlagDesign;
+import io.github.rodmguerra.issparser.model.tiles.FlagSnes4bpp;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +17,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static io.github.rodmguerra.issparser.commons.RomUtils.*;
 import static java.util.stream.Stream.concat;
 
@@ -27,7 +25,7 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
     private final File rom;
     private static final long POINTER_OFFSET = 0x941a;
     private static final long POINTER_STEP = 4;
-    private int maximumAddress = 0x489CD;//0x483FD;
+    private int maximumAddress = 0x48A7F;//0x489CD;
 
     public FlagDesignRomHandler(File rom) {
         this.rom = rom;
@@ -46,14 +44,14 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
     @Override
     public FlagDesign readFromRomAt(Team team) throws IOException {
         int topOffset = readPointerAt(team);
-        int bottomOffset = readPointer(rom, pointerOffset(team) + 2);
+        int bottomOffset = readPointer48(rom, pointerOffset(team) + 2);
         FlagDesign.Color[][] flagTop = readFlagPart(topOffset);
         FlagDesign.Color[][] flagBottom = readFlagPart(bottomOffset);
         return new FlagDesign(joinFlagParts(flagTop, flagBottom));
     }
 
     private int readPointerAt(Team team) throws IOException {
-        return readPointer(rom, pointerOffset(team));
+        return readPointer48(rom, pointerOffset(team));
     }
 
     public List<Team> teamsSharing(Team team) throws IOException {
@@ -595,11 +593,11 @@ public class FlagDesignRomHandler implements RomHandler<FlagDesign> {
         Map<Team, TopAndBottomAddress> map = new HashMap<>();
         for (Team team : Team.values()) {
             long offset = pointerOffset(team);
-            int topAddress = readPointer(rom, offset);
+            int topAddress = readPointer48(rom, offset);
             ByteSource source = Files.asByteSource(rom);
             int topSize = source.slice(topAddress, 1).read()[0];
             SizedAddress top = new SizedAddress(topAddress, topSize);
-            int bottomAddress = readPointer(rom, offset + 2);
+            int bottomAddress = readPointer48(rom, offset + 2);
             int bottomSize = source.slice(bottomAddress, 1).read()[0];
             SizedAddress bottom = new SizedAddress(bottomAddress, bottomSize);
             map.put(team, new TopAndBottomAddress(top, bottom));

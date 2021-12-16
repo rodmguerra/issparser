@@ -3,8 +3,8 @@ package io.github.rodmguerra.issparser.model;
 
 import io.github.rodmguerra.issparser.commons.RomHandler;
 import io.github.rodmguerra.issparser.model.colors.ColoredPart;
+import io.github.rodmguerra.issparser.model.tiles.FlagDesign;
 
-import java.util.List;
 import java.util.Set;
 
 import static com.google.common.collect.Sets.newLinkedHashSet;

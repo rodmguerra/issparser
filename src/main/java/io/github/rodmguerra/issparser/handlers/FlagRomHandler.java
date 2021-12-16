@@ -1,18 +1,14 @@
 package io.github.rodmguerra.issparser.handlers;
 
 
-import com.google.common.collect.Iterables;
 import io.github.rodmguerra.issparser.commons.RomHandler;
 import io.github.rodmguerra.issparser.handlers.tiles.FlagDesignRomHandler;
 import io.github.rodmguerra.issparser.model.Flag;
-import io.github.rodmguerra.issparser.model.FlagDesign;
 import io.github.rodmguerra.issparser.model.colors.ColoredPart;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-
-import static com.google.common.collect.Iterables.toArray;
 
 public class FlagRomHandler implements RomHandler<Flag> {
 

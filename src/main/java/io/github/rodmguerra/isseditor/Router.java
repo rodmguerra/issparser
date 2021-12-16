@@ -9,6 +9,8 @@ import io.github.rodmguerra.isseditor.hairandskin.HairAndSkinColorPage;
 import io.github.rodmguerra.isseditor.home.HomeController;
 import io.github.rodmguerra.isseditor.playernames.PlayerNameController;
 import io.github.rodmguerra.isseditor.playernames.PlayerNamePage;
+import io.github.rodmguerra.isseditor.teamnameingame.TeamNameController;
+import io.github.rodmguerra.isseditor.teamnameingame.TeamNamePage;
 import io.github.rodmguerra.isseditor.uniformcolors.UniformColorController;
 import io.github.rodmguerra.isseditor.uniformcolors.UniformColorPage;
 
@@ -24,7 +26,8 @@ public class Router {
         UNIFORM_COLORS(1),
         HAIR_AND_SKIN_COLORS(2),
         FLAG_COLORS(3),
-        FLAG_DESIGN(4);
+        FLAG_DESIGN(4),
+        TEAM_NAME_IN_GAME(5);
         private final int resource;
 
         private Route(int resource) {
@@ -52,6 +55,8 @@ public class Router {
         controllers.put(Route.HAIR_AND_SKIN_COLORS, new HairAndSkinColorController(this, new HairAndSkinColorPage()));
         controllers.put(Route.FLAG_COLORS, new FlagColorController(this, new FlagColorPage()));
         controllers.put(Route.FLAG_DESIGN, new FlagDesignController(this, new FlagDesignPage()));
+        controllers.put(Route.TEAM_NAME_IN_GAME, new TeamNameController(this, new TeamNamePage()));
+
         this.state = new State();
     }
 

@@ -1,15 +1,13 @@
 package io.github.rodmguerra.isseditor.flagdesign;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.common.io.Files;
 import io.github.rodmguerra.isseditor.color.views.ColoredPartView;
 import io.github.rodmguerra.isseditor.color.views.RGBView;
 import io.github.rodmguerra.isseditor.team.AbstractTeamPage;
 import io.github.rodmguerra.issparser.commons.RomHandler;
 import io.github.rodmguerra.issparser.model.Flag;
-import io.github.rodmguerra.issparser.model.FlagDesign;
+import io.github.rodmguerra.issparser.model.tiles.FlagDesign;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,10 +16,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Sets.newLinkedHashSet;
 import static io.github.rodmguerra.isseditor.ColorUtils.colorFromSnesRGB;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 
 public class FlagDesignPage extends AbstractTeamPage<Flag> {
     private FlagDesignView design;

@@ -111,7 +111,7 @@ public abstract class AbstractTeamPage<T> extends AbstractRomView<T> implements 
         JButton previousActionButton = new JButton("<<");
         previousActionButton.addActionListener(e -> previousResourceListener.run());
         resourceChangePanel.add(previousActionButton);
-        resourceCombo = new JComboBox<>(new String[]{"Player names", "Uniform colors", "Hair and skin colors", "Flag colors", "Flag design"});
+        resourceCombo = new JComboBox<>(new String[]{"Player names", "Uniform colors", "Hair and skin colors", "Flag colors", "Flag design", "Team name"});
         setSelectedIndexSafe(resourceCombo, resourceIndex());
         resourceCombo.repaint();
         resourceCombo.addItemListener(e -> {

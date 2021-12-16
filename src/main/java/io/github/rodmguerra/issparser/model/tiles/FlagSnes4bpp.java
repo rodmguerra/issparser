@@ -1,4 +1,4 @@
-package io.github.rodmguerra.issparser.model;
+package io.github.rodmguerra.issparser.model.tiles;
 
 public class FlagSnes4bpp {
     private final byte[] top;
