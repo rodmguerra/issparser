@@ -24,7 +24,7 @@ You can edit:
 - 0x48000 to 0x48A7F - Flag design tile images
 - 0x17680 to 0x17FFF - Team name tile images (automatically moved to this address)
 - 0x43ED5 to 0x44486 - Team name positional text data
-- 
+
 ### Images ###
 #### Team names ####
 ![uruguai](https://user-images.githubusercontent.com/1441876/146484653-892e5aba-cbfb-4580-9594-74d98fa5897f.png)
