@@ -9,8 +9,8 @@ import io.github.rodmguerra.isseditor.hairandskin.HairAndSkinColorPage;
 import io.github.rodmguerra.isseditor.home.HomeController;
 import io.github.rodmguerra.isseditor.playernames.PlayerNameController;
 import io.github.rodmguerra.isseditor.playernames.PlayerNamePage;
-import io.github.rodmguerra.isseditor.teamnameingame.TeamNameController;
-import io.github.rodmguerra.isseditor.teamnameingame.TeamNamePage;
+import io.github.rodmguerra.isseditor.teamname.TeamNameController;
+import io.github.rodmguerra.isseditor.teamname.TeamNamePage;
 import io.github.rodmguerra.isseditor.uniformcolors.UniformColorController;
 import io.github.rodmguerra.isseditor.uniformcolors.UniformColorPage;
 

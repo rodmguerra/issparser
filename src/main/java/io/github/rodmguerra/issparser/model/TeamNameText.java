@@ -13,10 +13,10 @@ import java.util.*;
 import static java.util.Comparator.naturalOrder;
 import static java.util.stream.Collectors.toList;
 
-public class TeamNameInMenu {
+public class TeamNameText {
     private final Multimap<Byte, TeamNameCharPart> map = ArrayListMultimap.create();
 
-    public static TeamNameInMenu forText(String text) {
+    public static TeamNameText forText(String text) {
         text = ParsingUtils.stripAccents(text).toUpperCase().replaceAll("[^A-Z\\. ]", " ");
         System.out.println(text);
         Multimap<Integer, TeamNameCharPart> zeroMap = ArrayListMultimap.create();
@@ -62,7 +62,7 @@ public class TeamNameInMenu {
         int positionDelta = currentSize / 2;
 
 
-        TeamNameInMenu teamName = new TeamNameInMenu();
+        TeamNameText teamName = new TeamNameText();
         for (int zeroPosition : zeroMap.keySet()) {
             int newPosition = zeroPosition - positionDelta;
             teamName.map.putAll((byte) newPosition, zeroMap.get(zeroPosition));
@@ -135,8 +135,8 @@ public class TeamNameInMenu {
         return Bytes.toArray(bytes);
     }
 
-    public static TeamNameInMenu deserialize(byte[] data) {
-        TeamNameInMenu teamName = new TeamNameInMenu();
+    public static TeamNameText deserialize(byte[] data) {
+        TeamNameText teamName = new TeamNameText();
         int charPartLength = data.length / 4;
         List<TeamNameCharPart> chars = new ArrayList<>(charPartLength);
         ByteBuffer buffer = ByteBuffer.wrap(Arrays.copyOfRange(data, 1, data.length));
@@ -153,23 +153,5 @@ public class TeamNameInMenu {
     public String toString() {
         return getText();
     }
-
-    public int getNumberOfPositions() {
-        return map.keySet().size();
-    }
-
-    public int getLetterSize(int position) {
-        List<Byte> positions = map.keySet().stream().sorted(naturalOrder()).collect(toList());
-        if(position >= positions.size() - 1) return 0;
-        return positions.get(position+1) - positions.get(position);
-    }
-
-    public Collection<TeamNameCharPart> getLetterAt(int position) {
-        List<Byte> positions = map.keySet().stream().sorted(naturalOrder()).collect(toList());
-        return map.get(positions.get(position));
-    }
-
-
-
 
 }

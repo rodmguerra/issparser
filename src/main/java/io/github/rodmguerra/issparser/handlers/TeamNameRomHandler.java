@@ -3,18 +3,18 @@ package io.github.rodmguerra.issparser.handlers;
 
 import io.github.rodmguerra.issparser.commons.RomHandler;
 import io.github.rodmguerra.issparser.handlers.texts.TeamName;
-import io.github.rodmguerra.issparser.model.TeamNameInMenu;
-import io.github.rodmguerra.issparser.model.tiles.TeamNameInGame;
+import io.github.rodmguerra.issparser.model.TeamNameText;
+import io.github.rodmguerra.issparser.model.tiles.TeamNameTiles;
 
 import java.io.IOException;
 import java.util.Map;
 
 public class TeamNameRomHandler implements RomHandler<TeamName> {
 
-    private final RomHandler<TeamNameInMenu> menuHandler;
-    private final RomHandler<TeamNameInGame> gameHandler;
+    private final RomHandler<TeamNameText> menuHandler;
+    private final RomHandler<TeamNameTiles> gameHandler;
 
-    public TeamNameRomHandler(RomHandler<TeamNameInMenu> menuHandler, RomHandler<TeamNameInGame> gameHandler) {
+    public TeamNameRomHandler(RomHandler<TeamNameText> menuHandler, RomHandler<TeamNameTiles> gameHandler) {
         this.menuHandler = menuHandler;
         this.gameHandler = gameHandler;
     }

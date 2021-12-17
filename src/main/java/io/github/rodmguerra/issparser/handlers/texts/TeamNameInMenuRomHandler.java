@@ -7,7 +7,7 @@ import com.google.common.io.Files;
 import io.github.rodmguerra.issparser.commons.FileUtils;
 import io.github.rodmguerra.issparser.commons.ParsingUtils;
 import io.github.rodmguerra.issparser.commons.RomHandler;
-import io.github.rodmguerra.issparser.model.TeamNameInMenu;
+import io.github.rodmguerra.issparser.model.TeamNameText;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 import static io.github.rodmguerra.issparser.commons.RomUtils.*;
 
-public class TeamNameInMenuRomHandler implements RomHandler<TeamNameInMenu> {
+public class TeamNameInMenuRomHandler implements RomHandler<TeamNameText> {
 
     private final File rom;
     private static final long POINTER_OFFSET = 0x39DAE;
@@ -29,8 +29,8 @@ public class TeamNameInMenuRomHandler implements RomHandler<TeamNameInMenu> {
     }
 
     @Override
-    public Map<Team, TeamNameInMenu> readFromRom() throws IOException {
-        Map<Team, TeamNameInMenu> map = new HashMap<>();
+    public Map<Team, TeamNameText> readFromRom() throws IOException {
+        Map<Team, TeamNameText> map = new HashMap<>();
         for (Team team : Team.values()) {
             map.put(team, readFromRomAt(team));
         }
@@ -38,12 +38,12 @@ public class TeamNameInMenuRomHandler implements RomHandler<TeamNameInMenu> {
     }
 
     @Override
-    public void writeToRom(Map<Team, ? extends TeamNameInMenu> input) throws IOException {
+    public void writeToRom(Map<Team, ? extends TeamNameText> input) throws IOException {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public TeamNameInMenu readFromRomAt(Team team) throws IOException {
+    public TeamNameText readFromRomAt(Team team) throws IOException {
         int offset = readPointerAt(team);
         System.out.println(Integer.toHexString(offset));
         ByteSource source = Files.asByteSource(rom);
@@ -51,7 +51,7 @@ public class TeamNameInMenuRomHandler implements RomHandler<TeamNameInMenu> {
         byte[] data = source.slice(offset, length + 1).read();
         System.out.println(team + " name text on address " + Integer.toHexString(offset));
         System.out.println(ParsingUtils.bytesString(data));
-        return TeamNameInMenu.deserialize(data);
+        return TeamNameText.deserialize(data);
     }
 
 
@@ -85,7 +85,7 @@ public class TeamNameInMenuRomHandler implements RomHandler<TeamNameInMenu> {
     }
 
     @Override
-    public void writeToRomAt(Team team, TeamNameInMenu input) throws IOException {
+    public void writeToRomAt(Team team, TeamNameText input) throws IOException {
         System.out.println("Write team name in menu to rom at " + team);
         byte[] data = input.serialize();
         int newSize = data.length;

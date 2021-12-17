@@ -1,6 +1,9 @@
 package io.github.rodmguerra.isseditor;
 
+import com.google.common.io.Resources;
+
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 
 public class DesktopApp {
@@ -24,7 +27,8 @@ public class DesktopApp {
             throw new RuntimeException(e);
         }
 
-        JFrame frame = new JFrame();//creating instance of JFrame
+        JFrame frame = new JFrame();//creatinginstance of JFrame
+        frame.setIconImage(new ImageIcon(Resources.getResource("logo.png")).getImage());
 
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             System.out.println("Exception handling: ");
@@ -51,7 +55,7 @@ public class DesktopApp {
         frame.setLayout(grid);
         frame.setVisible(true);
         frame.setResizable(false);
-        frame.setTitle("rodmguerra - ISS Studio 1.4-beta");
+        frame.setTitle("rodmguerra - ISS Studio 1.5-beta");
         router.navigate(Router.Route.HOME, new State());
     }
 

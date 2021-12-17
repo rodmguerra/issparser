@@ -1,23 +1,23 @@
 package io.github.rodmguerra.issparser.handlers.texts;
 
 
-import io.github.rodmguerra.issparser.model.tiles.TeamNameInGame;
-import io.github.rodmguerra.issparser.model.TeamNameInMenu;
+import io.github.rodmguerra.issparser.model.TeamNameText;
+import io.github.rodmguerra.issparser.model.tiles.TeamNameTiles;
 
 public class TeamName {
-    private final TeamNameInMenu inMenu;
-    private final TeamNameInGame inGame;
+    private final TeamNameText inMenu;
+    private final TeamNameTiles inGame;
 
-    public TeamName(TeamNameInMenu inMenu, TeamNameInGame inGame) {
+    public TeamName(TeamNameText inMenu, TeamNameTiles inGame) {
         this.inMenu = inMenu;
         this.inGame = inGame;
     }
 
-    public TeamNameInMenu getInMenu() {
+    public TeamNameText getInMenu() {
         return inMenu;
     }
 
-    public TeamNameInGame getInGame() {
+    public TeamNameTiles getInGame() {
         return inGame;
     }
 }

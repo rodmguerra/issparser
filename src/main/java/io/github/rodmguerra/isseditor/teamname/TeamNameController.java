@@ -1,4 +1,4 @@
-package io.github.rodmguerra.isseditor.teamnameingame;
+package io.github.rodmguerra.isseditor.teamname;
 
 import io.github.rodmguerra.isseditor.Router;
 import io.github.rodmguerra.isseditor.team.AbstractTeamController;

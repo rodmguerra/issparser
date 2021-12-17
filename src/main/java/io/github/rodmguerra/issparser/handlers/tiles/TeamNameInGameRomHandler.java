@@ -7,18 +7,16 @@ import com.google.common.io.Files;
 import io.github.rodmguerra.issparser.commons.FileUtils;
 import io.github.rodmguerra.issparser.commons.RomHandler;
 import io.github.rodmguerra.issparser.commons.RomUtils;
-import io.github.rodmguerra.issparser.model.tiles.TeamNameInGame;
+import io.github.rodmguerra.issparser.model.tiles.TeamNameTiles;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
 
 import static io.github.rodmguerra.issparser.commons.RomUtils.*;
-import static java.util.stream.Collectors.toList;
 
-public class TeamNameInGameRomHandler implements RomHandler<TeamNameInGame> {
+public class TeamNameInGameRomHandler implements RomHandler<TeamNameTiles> {
 
     private final File rom;
     private static final long POINTER_OFFSET = 0x93CD;
@@ -32,20 +30,20 @@ public class TeamNameInGameRomHandler implements RomHandler<TeamNameInGame> {
     }
 
     @Override
-    public Map<Team, TeamNameInGame> readFromRom() throws IOException {
+    public Map<Team, TeamNameTiles> readFromRom() throws IOException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void writeToRom(Map<Team, ? extends TeamNameInGame> input) throws IOException {
+    public void writeToRom(Map<Team, ? extends TeamNameTiles> input) throws IOException {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public TeamNameInGame readFromRomAt(Team team) throws IOException {
+    public TeamNameTiles readFromRomAt(Team team) throws IOException {
         int offset = readPointerAt(team);
-        TeamNameInGame.Color[][] matrix = readMatrix(offset);
-        return new TeamNameInGame(matrix);
+        TeamNameTiles.Color[][] matrix = readMatrix(offset);
+        return new TeamNameTiles(matrix);
     }
 
     private PointerFormat pointerFormat() throws IOException {
@@ -81,7 +79,7 @@ public class TeamNameInGameRomHandler implements RomHandler<TeamNameInGame> {
     }
 
     @Override
-    public void writeToRomAt(Team team, TeamNameInGame input) throws IOException {
+    public void writeToRomAt(Team team, TeamNameTiles input) throws IOException {
         RomUtils.displaceTeamNameTilesIfNecessary(rom);
         pointerFormat = PointerFormat.P17000;
         System.out.println("Write team name design to rom at " + team);
@@ -209,7 +207,7 @@ public class TeamNameInGameRomHandler implements RomHandler<TeamNameInGame> {
         return Runtime.getRuntime().exec(command, null);
     }
 
-    private TeamNameInGame.Color[][] readMatrix(int offset) throws IOException {
+    private TeamNameTiles.Color[][] readMatrix(int offset) throws IOException {
         String command = "konami\\konami_d \"" + rom.getAbsolutePath() + "\" 0x" + Integer.toHexString(offset) + " 1";
         System.out.println(command);
 
@@ -219,7 +217,7 @@ public class TeamNameInGameRomHandler implements RomHandler<TeamNameInGame> {
                 File decomp = new File("decomp.bin");
                 byte[] bytes = Files.asByteSource(decomp).read();
                 //System.out.println("Flag part: " + bytesString(bytes));
-                TeamNameInGame.Color[][] colors = bytesToMatrix(bytes);
+                TeamNameTiles.Color[][] colors = bytesToMatrix(bytes);
                 try {
                     decomp.delete();
                 } catch (Exception e) {
@@ -233,9 +231,9 @@ public class TeamNameInGameRomHandler implements RomHandler<TeamNameInGame> {
         }
     }
 
-    private static TeamNameInGame.Color[][] bytesToMatrix(byte[] bytes) {
+    private static TeamNameTiles.Color[][] bytesToMatrix(byte[] bytes) {
         // System.out.println(bytes.length);
-        TeamNameInGame.Color[][] matrix = new TeamNameInGame.Color[8][8 * 4];
+        TeamNameTiles.Color[][] matrix = new TeamNameTiles.Color[8][8 * 4];
         for (int b = 0; b < bytes.length / 2; b++) {
             int i = 16 * (b / 8) + (b % 8) * 2;
 
@@ -246,7 +244,7 @@ public class TeamNameInGameRomHandler implements RomHandler<TeamNameInGame> {
                 //System.out.println(b/2);
                 int row = b % 8;
                 int col = b / 8 * 8 + j;
-                matrix[row][col] = TeamNameInGame.Color.forCode(byteOf(new boolean[]{b1[j], b2[j]}));
+                matrix[row][col] = TeamNameTiles.Color.forCode(byteOf(new boolean[]{b1[j], b2[j]}));
             }
         }
         return matrix;
@@ -281,24 +279,32 @@ public class TeamNameInGameRomHandler implements RomHandler<TeamNameInGame> {
         }
     }
 
+
     public static void main(String[] args) throws IOException {
         TeamNameInGameRomHandler handler = new TeamNameInGameRomHandler(new File("iss.sfc"));
+        /*
         Multimap<SizedAddress, Team> invert = handler.invert(handler.readAddressMap());
         Stream<SizedAddress> stream = invert.keys().<SizedAddress>stream();
         SizedAddress address = (SizedAddress) stream.collect(toList()).get(invert.keys().size() - 1);
         System.out.println("Last position" + Integer.toHexString(address.getAddress() + address.getSize() - 1));
         System.out.println(invert);
+        */
+
+        for (Team team : Team.values()) {
+            System.out.println(handler.readFromRomAt(team));
+        }
     }
 
-    private static byte[] serialize(TeamNameInGame teamNameTiles) {
-        TeamNameInGame.Color[][] matrix = teamNameTiles.getMatrix();
+
+    private static byte[] serialize(TeamNameTiles teamNameTiles) {
+        TeamNameTiles.Color[][] matrix = teamNameTiles.getMatrix();
         byte[] data = new byte[64];
         for (int b = 0; b < 32; b++) {
             int i = 16 * (b / 8) + (b % 8) * 2;
             for (int j = 0; j < 8; j++) {
                 int row = b % 8;
                 int col = b / 8 * 8 + j;
-                TeamNameInGame.Color color = matrix[row][col];
+                TeamNameTiles.Color color = matrix[row][col];
                 byte colorCode = color.getCode();
                 //System.out.println("row: " + row + ", col: " + col);
                 data[i] |= getBit(colorCode, 0) << (7 - j);
