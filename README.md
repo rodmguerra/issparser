@@ -1,34 +1,39 @@
+# Rodmguerra's ISS Studio
 
+ISS Studio is a Graphical User Interface to create your own game based on the game **International Super Star Soccer** for Super Nintendo Entertainment System (SNES).
+
+
+### Latest version ###
+
+
+### Features ###
+You can edit:
+- Team names (positional text and tile images under the flag)
+- Player names
+- Flag (design and colors)
+- Uniform (kit) colors (for outfield players and goalkeepers)
+- Hair and skin colors (for outfield players and goalkeepers)
+
+### Notes ###
+- Works well with original ROM **International Super Star Soccer (Europe)**, and ROMs based on it
+- When you save the design of a flag or a team name tile based image, team name tiled images are moved to the address 0x17680, so that you will have additional space to create more flags than the original game (from 0x48000 to 0x48A7F)
+
+**Positions used by editor** (you will recieve an error in order to protect your rom if data overtake this addresses)
+- 0x48000 to 0x48A7F - Flag design tile images
+- 0x17680 to 0x17FFF - Team name tile images (automatically moved to this address)
+- 0x43ED5 to 0x44486 - Team name positional text data
+
+### Images ###
+#### Team names ####
+![uruguai](https://user-images.githubusercontent.com/1441876/146484653-892e5aba-cbfb-4580-9594-74d98fa5897f.png)
+
+#### Flag Design ####
 ![vasco-fla](https://user-images.githubusercontent.com/1441876/145671018-c48e3605-cda3-45b8-b940-dd28a9a542b6.png)
 
-### Rodmguerra's ISS Studio 1.4-beta
-
-- [Download](https://github.com/rodmguerra/issparser/releases/download/v1.4-beta/iss-studio-1.4-beta.zip) zip file, unzip it and run jar file (Required Java 8 or higher)
-
-
-#### Features ####
-- Flag design (new) (Required Windows, for konami compressor/decompressor)
-- Player names
-- Uniform colors (outfield and goalkeepers)
-- Hair and skin colors
-- Flag colors
-
 ---
 
-### Rodmguerra's ISS Editor 1.3
-
-- [Download](https://github.com/rodmguerra/issparser/releases/download/v1.3/rodmguerra-iss-editor-1.3.jar) and run jar file. (Required Java 8 or higher)
-
-#### Features ####
-- Player names
-- Uniform colors (outfield and goalkeepers)
-- Hair and skin colors
-- Flag colors
-
----
-
-### Author
-* Rodrigo Guerra
+### Author ###
+* Rodrigo Mallmann Guerra
 
 ### Special thanks to
 * Equipe Puma (particularly, Daniel Cardoso), for support, including rom hacking information, lots of offset maps and feature suggestions.
