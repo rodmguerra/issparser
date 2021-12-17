@@ -154,7 +154,7 @@ public class TeamNameCharPart {
             .put("G", new TeamNameCharPart(false, (byte) 0xC6, (byte) 0x06))
             .put("H", new TeamNameCharPart(false, (byte) 0xC7, (byte) 0x06))
             .put("I", new TeamNameCharPart(false, (byte) 0xC8, (byte) 0x06, (byte) 7))
-            .put("J", new TeamNameCharPart(false, (byte) 0xC9, (byte) 0x16))
+            .put("J", new TeamNameCharPart(false, (byte) 0xC9, (byte) 0x06))
             .put("K", new TeamNameCharPart(false, (byte) 0xCA, (byte) 0x06))
             .put("L", new TeamNameCharPart(false, (byte) 0xCB, (byte) 0x06))
             .put("M", new TeamNameCharPart(false, (byte) 0xCC, (byte) 0x06, (byte) 8))
@@ -195,6 +195,10 @@ public class TeamNameCharPart {
 
 
             }
+
+            TeamNameCharPart part = map.remove("PQ");
+            map.put("PA", part);
+
             topAndBottoms = ImmutableBiMap.copyOf(map);
         }
         return topAndBottoms;

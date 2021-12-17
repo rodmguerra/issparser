@@ -115,9 +115,7 @@ public class TeamNamePage extends AbstractTeamPage<TeamName> {
 
     @Override
     public TeamName getData() {
-        if (!inMenuModel.getText().equals(inMenuView.getText())) {
-            inMenuModel = TeamNameText.forText(inMenuView.getText());
-        }
+        inMenuModel = TeamNameText.forText(inMenuView.getText());
         return new TeamName(inMenuModel, inGameView.toModel());
     }
 

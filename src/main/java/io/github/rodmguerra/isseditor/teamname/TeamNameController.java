@@ -5,8 +5,8 @@ import io.github.rodmguerra.isseditor.team.AbstractTeamController;
 import io.github.rodmguerra.issparser.commons.RomHandler;
 import io.github.rodmguerra.issparser.handlers.TeamNameRomHandler;
 import io.github.rodmguerra.issparser.handlers.texts.TeamName;
-import io.github.rodmguerra.issparser.handlers.texts.TeamNameInMenuRomHandler;
-import io.github.rodmguerra.issparser.handlers.tiles.TeamNameInGameRomHandler;
+import io.github.rodmguerra.issparser.handlers.texts.TeamNameTextRomHandler;
+import io.github.rodmguerra.issparser.handlers.tiles.TeamNameTilesRomHandler;
 
 import java.io.File;
 
@@ -18,7 +18,7 @@ public class TeamNameController extends AbstractTeamController<TeamName> {
 
     @Override
     protected RomHandler<TeamName> romHandlerFor(File rom) {
-        return new TeamNameRomHandler(new TeamNameInMenuRomHandler(rom), new TeamNameInGameRomHandler(rom));
+        return new TeamNameRomHandler(new TeamNameTextRomHandler(rom), new TeamNameTilesRomHandler(rom));
     }
 
 

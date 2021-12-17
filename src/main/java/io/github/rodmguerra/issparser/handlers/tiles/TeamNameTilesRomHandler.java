@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import static io.github.rodmguerra.issparser.commons.RomUtils.*;
 
-public class TeamNameInGameRomHandler implements RomHandler<TeamNameTiles> {
+public class TeamNameTilesRomHandler implements RomHandler<TeamNameTiles> {
 
     private final File rom;
     private static final long POINTER_OFFSET = 0x93CD;
@@ -25,7 +25,7 @@ public class TeamNameInGameRomHandler implements RomHandler<TeamNameTiles> {
     private int maximumAddress17 = 0x17FFF;//0x483FD;
     private PointerFormat pointerFormat;
 
-    public TeamNameInGameRomHandler(File rom) {
+    public TeamNameTilesRomHandler(File rom) {
         this.rom = rom;
     }
 
@@ -281,7 +281,7 @@ public class TeamNameInGameRomHandler implements RomHandler<TeamNameTiles> {
 
 
     public static void main(String[] args) throws IOException {
-        TeamNameInGameRomHandler handler = new TeamNameInGameRomHandler(new File("iss.sfc"));
+        TeamNameTilesRomHandler handler = new TeamNameTilesRomHandler(new File("iss.sfc"));
         /*
         Multimap<SizedAddress, Team> invert = handler.invert(handler.readAddressMap());
         Stream<SizedAddress> stream = invert.keys().<SizedAddress>stream();

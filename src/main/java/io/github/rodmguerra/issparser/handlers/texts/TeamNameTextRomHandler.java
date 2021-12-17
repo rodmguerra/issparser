@@ -17,14 +17,14 @@ import java.util.Map;
 
 import static io.github.rodmguerra.issparser.commons.RomUtils.*;
 
-public class TeamNameInMenuRomHandler implements RomHandler<TeamNameText> {
+public class TeamNameTextRomHandler implements RomHandler<TeamNameText> {
 
     private final File rom;
     private static final long POINTER_OFFSET = 0x39DAE;
     private static final long POINTER_STEP = 2;
     private int maximumAddress = 0x44486;
 
-    public TeamNameInMenuRomHandler(File rom) {
+    public TeamNameTextRomHandler(File rom) {
         this.rom = rom;
     }
 
@@ -202,7 +202,7 @@ public class TeamNameInMenuRomHandler implements RomHandler<TeamNameText> {
     }
 
     public static void main(String[] args) throws IOException {
-        TeamNameInMenuRomHandler handler = new TeamNameInMenuRomHandler(new File("..\\Uemura Cup.smc"));
+        TeamNameTextRomHandler handler = new TeamNameTextRomHandler(new File("iss.sfc"));
         //System.out.println(handler.invert(handler.readAddressMap()));
         /*for (Team team : Team.values()) {
             TeamNameInMenu name = handler.readFromRomAt(team);
