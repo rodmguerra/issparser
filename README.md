@@ -3,8 +3,9 @@
 ISS Studio is a Graphical User Interface to create your own game based on the game **International Super Star Soccer** for Super Nintendo Entertainment System (SNES).
 
 
-### Latest version ###
-
+### Latest version (1.5-beta) ###
+- [Windows executable (.exe)](https://github.com/rodmguerra/issparser/releases/download/v1.5-beta/rodmguerra-iss-studio-1.5-beta-windows.zip)
+- [Java archive (.jar)] (https://github.com/rodmguerra/issparser/releases/download/v1.5-beta/rodmguerra-iss-studio-1.5-beta-jarfile.zip)
 
 ### Features ###
 You can edit:
@@ -17,6 +18,7 @@ You can edit:
 ### Notes ###
 - Works well with original ROM **International Super Star Soccer (Europe)**, and ROMs based on it
 - When you save the design of a flag or a team name tile based image, team name tiled images are moved to the address 0x17680, so that you will have additional space to create more flags than the original game (from 0x48000 to 0x48A7F)
+- Windows is required for the features Flag Design and Team Name, that is because it makes use of konami compressor/decompressor tool which works only in Windows. 
 
 **Positions used by editor** (you will recieve an error in order to protect your rom if data overtake this addresses)
 - 0x48000 to 0x48A7F - Flag design tile images
