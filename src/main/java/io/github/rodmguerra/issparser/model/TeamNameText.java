@@ -5,7 +5,6 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.primitives.Bytes;
 import io.github.rodmguerra.issparser.commons.ParsingUtils;
-import io.github.rodmguerra.issparser.handlers.texts.TeamNameCharPart;
 
 import java.nio.ByteBuffer;
 import java.util.*;
@@ -17,7 +16,7 @@ public class TeamNameText {
     private final Multimap<Byte, TeamNameCharPart> map = ArrayListMultimap.create();
 
     public static TeamNameText forText(String text) {
-        text = ParsingUtils.stripAccents(text).toUpperCase().replaceAll("[^A-Z\\. ]", " ");
+        text = ParsingUtils.stripAccents(text).toUpperCase().replaceAll("[^A-Z0-9\\. ]", " ");
         System.out.println(text);
         Multimap<Integer, TeamNameCharPart> zeroMap = ArrayListMultimap.create();
         int currentPosition = 0;

@@ -3,12 +3,13 @@ package io.github.rodmguerra.isseditor.hairandskin;
 import io.github.rodmguerra.isseditor.team.AbstractTeamPage;
 import io.github.rodmguerra.isseditor.color.views.ColoredPartView;
 import io.github.rodmguerra.isseditor.color.views.RGBView;
-import io.github.rodmguerra.issparser.model.colors.hairandskin.TeamHairAndSkin;
+import io.github.rodmguerra.issparser.model.HairAndSkinCombo;
+import io.github.rodmguerra.issparser.model.colors.hairandskin.NormalHairAndSkin;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class HairAndSkinColorPage extends AbstractTeamPage<TeamHairAndSkin> {
+public class HairAndSkinColorPage extends AbstractTeamPage<HairAndSkinCombo> {
     private TeamHairAndSkinView view;
 
     @Override
@@ -23,10 +24,32 @@ public class HairAndSkinColorPage extends AbstractTeamPage<TeamHairAndSkin> {
         layout.setAlignOnBaseline(true);
         innerPanel.setLayout(layout);
         if(view == null) view = TeamHairAndSkinView.zero();
-        innerPanel.add(panelFor("First", view.getFirst()));
-        innerPanel.add(panelFor("Second", view.getSecond()));
+        innerPanel.add(panelFor("Normal players", view.getFirst()));
+        innerPanel.add(specialPanel("Special players"));
+        //innerPanel.add(panelFor("Second", view.getSecond()));
         innerPanel.add(panelFor("Goalkeeper", view.getGoalkeeper()));
         return innerPanel;
+    }
+
+    private Component specialPanel(String title) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
+        panel.setVisible(true);
+
+        JPanel hairPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        hairPanel.add(view.getSpecialHairField());
+        hairPanel.setBorder(BorderFactory.createTitledBorder("Hair"));
+        JPanel skinPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        skinPanel.add(view.getSpecialSkinField());
+        skinPanel.setBorder(BorderFactory.createTitledBorder("Skin"));
+
+        panel.add(hairPanel);
+        panel.add(skinPanel);
+
+        panel.setBorder(BorderFactory.createTitledBorder(title));
+        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.setMaximumSize( panel.getPreferredSize() );
+        return panel;
     }
 
 
@@ -65,12 +88,12 @@ public class HairAndSkinColorPage extends AbstractTeamPage<TeamHairAndSkin> {
     }
 
     @Override
-    public TeamHairAndSkin getData() {
+    public HairAndSkinCombo getData() {
         return view.toModel();
     }
 
     @Override
-    public void setData(TeamHairAndSkin model) {
+    public void setData(HairAndSkinCombo model) {
         view.setFromModel(model);
     }
 }

@@ -1,8 +1,7 @@
-package io.github.rodmguerra.issparser.handlers.texts;
+package io.github.rodmguerra.issparser.model;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
-import io.github.rodmguerra.issparser.commons.ParsingUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -142,6 +141,16 @@ public class TeamNameCharPart {
             .put("Y", new TeamNameCharPart(true, (byte) 0xF8, (byte) 0x06))
             .put("Z", new TeamNameCharPart(true, (byte) 0xF9, (byte) 0x06))
             .put(".", new TeamNameCharPart(true, (byte) 0xFA, (byte) 0x06, (byte) 7))
+            .put("0", new TeamNameCharPart(true, (byte) 0xB0, (byte) 0x06))
+            .put("1", new TeamNameCharPart(true, (byte) 0xB1, (byte) 0x06))
+            .put("2", new TeamNameCharPart(true, (byte) 0xB2, (byte) 0x06))
+            .put("3", new TeamNameCharPart(true, (byte) 0xB3, (byte) 0x06))
+            .put("4", new TeamNameCharPart(true, (byte) 0xB4, (byte) 0x06))
+            .put("5", new TeamNameCharPart(true, (byte) 0xB5, (byte) 0x06))
+            .put("6", new TeamNameCharPart(true, (byte) 0xB6, (byte) 0x06))
+            .put("7", new TeamNameCharPart(true, (byte) 0xB7, (byte) 0x06))
+            .put("8", new TeamNameCharPart(true, (byte) 0xB8, (byte) 0x06))
+            .put("9", new TeamNameCharPart(true, (byte) 0xB9, (byte) 0x06))
             .build();
 
     private static final BiMap<String, TeamNameCharPart> tops = ImmutableBiMap.<String, TeamNameCharPart>builder()
@@ -171,6 +180,16 @@ public class TeamNameCharPart {
             .put("X", new TeamNameCharPart(false, (byte) 0xE7, (byte) 0x06))
             .put("Y", new TeamNameCharPart(false, (byte) 0xE8, (byte) 0x06))
             .put("Z", new TeamNameCharPart(false, (byte) 0xE9, (byte) 0x06))
+            .put("0", new TeamNameCharPart(false, (byte) 0xA0, (byte) 0x06))
+            .put("1", new TeamNameCharPart(false, (byte) 0xA1, (byte) 0x06))
+            .put("2", new TeamNameCharPart(false, (byte) 0xA2, (byte) 0x06))
+            .put("3", new TeamNameCharPart(false, (byte) 0xA3, (byte) 0x06))
+            .put("4", new TeamNameCharPart(false, (byte) 0xA4, (byte) 0x06))
+            .put("5", new TeamNameCharPart(false, (byte) 0xA5, (byte) 0x06))
+            .put("6", new TeamNameCharPart(false, (byte) 0xA6, (byte) 0x06))
+            .put("7", new TeamNameCharPart(false, (byte) 0xA7, (byte) 0x06))
+            .put("8", new TeamNameCharPart(false, (byte) 0xA8, (byte) 0x06))
+            .put("9", new TeamNameCharPart(false, (byte) 0xA9, (byte) 0x06))
             .build();
 
 
@@ -180,7 +199,7 @@ public class TeamNameCharPart {
         if (topAndBottoms == null) {
             Map<String, TeamNameCharPart> map = new HashMap<>();
             for (String letter : tops.keySet()) {
-                if(letter.equals("Z")) continue;
+                if(letter.equals("Z") || letter.equals("9")) continue;
                 TeamNameCharPart part = tops.get(letter);
                 String nextChar = String.valueOf((char) (letter.charAt(0) + 1));
                 map.put(letter + nextChar, new TeamNameCharPart(

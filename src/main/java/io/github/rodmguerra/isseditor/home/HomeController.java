@@ -3,6 +3,7 @@ package io.github.rodmguerra.isseditor.home;
 import io.github.rodmguerra.isseditor.AbstractController;
 import io.github.rodmguerra.isseditor.Router;
 import io.github.rodmguerra.isseditor.State;
+import io.github.rodmguerra.isseditor.Texts;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +24,7 @@ public class HomeController extends AbstractController {
         innerPanel.setLayout(layout);
         panel.add(innerPanel);
 
-        JButton openRomButton = new JButton("Open ROM...");
+        JButton openRomButton = new JButton(Texts.OPEN_ROM);
         openRomButton.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
@@ -35,7 +36,7 @@ public class HomeController extends AbstractController {
             }
         });
         innerPanel.add(Box.createRigidArea(new Dimension(50, 50)));
-        innerPanel.add(new JLabel("Rodmguerra's ISS Studio v1.5-beta"));
+        innerPanel.add(new JLabel(Texts.TITLE));
         innerPanel.add(Box.createRigidArea(new Dimension(50, 10)));
         innerPanel.add(openRomButton);
         innerPanel.add(Box.createRigidArea(new Dimension(50, 50)));

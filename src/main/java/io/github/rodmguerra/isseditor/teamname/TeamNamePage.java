@@ -1,7 +1,7 @@
 package io.github.rodmguerra.isseditor.teamname;
 
 import io.github.rodmguerra.isseditor.team.AbstractTeamPage;
-import io.github.rodmguerra.issparser.handlers.texts.TeamName;
+import io.github.rodmguerra.issparser.model.TeamName;
 import io.github.rodmguerra.issparser.model.TeamNameText;
 import io.github.rodmguerra.issparser.model.tiles.TeamNameTiles;
 

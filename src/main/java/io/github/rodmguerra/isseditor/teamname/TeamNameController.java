@@ -4,7 +4,7 @@ import io.github.rodmguerra.isseditor.Router;
 import io.github.rodmguerra.isseditor.team.AbstractTeamController;
 import io.github.rodmguerra.issparser.commons.RomHandler;
 import io.github.rodmguerra.issparser.handlers.TeamNameRomHandler;
-import io.github.rodmguerra.issparser.handlers.texts.TeamName;
+import io.github.rodmguerra.issparser.model.TeamName;
 import io.github.rodmguerra.issparser.handlers.texts.TeamNameTextRomHandler;
 import io.github.rodmguerra.issparser.handlers.tiles.TeamNameTilesRomHandler;
 

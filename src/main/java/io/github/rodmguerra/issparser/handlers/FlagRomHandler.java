@@ -6,29 +6,16 @@ import io.github.rodmguerra.issparser.handlers.tiles.FlagDesignRomHandler;
 import io.github.rodmguerra.issparser.model.Flag;
 import io.github.rodmguerra.issparser.model.colors.ColoredPart;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 public class FlagRomHandler implements RomHandler<Flag> {
 
-    private final File rom;
     private final FlagDesignRomHandler designHandler;
     private final RomHandler<ColoredPart> colorHandler;
 
-    public FlagRomHandler(File rom, FlagDesignRomHandler designHandler, RomHandler<ColoredPart> colorHandler) {
-        this.rom = rom;
+    public FlagRomHandler(FlagDesignRomHandler designHandler, RomHandler<ColoredPart> colorHandler) {
         this.designHandler = designHandler;
         this.colorHandler = colorHandler;
-    }
-
-    @Override
-    public Map<Team, Flag> readFromRom() throws IOException {
-        return null;
-    }
-
-    @Override
-    public void writeToRom(Map<Team, ? extends Flag> input) throws IOException {
     }
 
     @Override
@@ -41,6 +28,4 @@ public class FlagRomHandler implements RomHandler<Flag> {
         designHandler.writeToRomAt(team, input.getTeamsUsing(), input.getDesign());
         colorHandler.writeToRomAt(team, input.getColors());
     }
-
-
 }

@@ -6,7 +6,6 @@ import io.github.rodmguerra.isseditor.team.TeamView;
 import io.github.rodmguerra.issparser.commons.RomHandler;
 import io.github.rodmguerra.issparser.handlers.colors.FlagColorRomHandler;
 import io.github.rodmguerra.issparser.model.colors.ColoredPart;
-import io.github.rodmguerra.issparser.model.colors.RGB;
 
 import java.io.File;
 

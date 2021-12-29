@@ -3,7 +3,6 @@ package io.github.rodmguerra.isseditor.team;
 import io.github.rodmguerra.isseditor.AbstractController;
 import io.github.rodmguerra.isseditor.Router;
 import io.github.rodmguerra.isseditor.State;
-import io.github.rodmguerra.isseditor.team.TeamView;
 import io.github.rodmguerra.issparser.commons.RomHandler;
 
 import javax.swing.*;

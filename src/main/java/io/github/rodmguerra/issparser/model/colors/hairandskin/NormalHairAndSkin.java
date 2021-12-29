@@ -1,11 +1,11 @@
 package io.github.rodmguerra.issparser.model.colors.hairandskin;
 
-public class TeamHairAndSkin {
+public class NormalHairAndSkin {
     private final HairAndSkin first;
     private final HairAndSkin second;
     private final HairAndSkin goalkeeper;
 
-    public TeamHairAndSkin(HairAndSkin first, HairAndSkin second, HairAndSkin goalkeeper) {
+    public NormalHairAndSkin(HairAndSkin first, HairAndSkin second, HairAndSkin goalkeeper) {
         this.first = first;
         this.second = second;
         this.goalkeeper = goalkeeper;
@@ -28,7 +28,7 @@ public class TeamHairAndSkin {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TeamHairAndSkin that = (TeamHairAndSkin) o;
+        NormalHairAndSkin that = (NormalHairAndSkin) o;
 
         if (first != null ? !first.equals(that.first) : that.first != null) return false;
         if (goalkeeper != null ? !goalkeeper.equals(that.goalkeeper) : that.goalkeeper != null) return false;

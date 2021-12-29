@@ -9,8 +9,6 @@ import io.github.rodmguerra.issparser.commons.FileUtils;
 import io.github.rodmguerra.issparser.commons.RomHandler;
 import io.github.rodmguerra.issparser.model.colors.ColoredPart;
 import io.github.rodmguerra.issparser.model.colors.RGB;
-import io.github.rodmguerra.issparser.model.colors.hairandskin.HairAndSkin;
-import io.github.rodmguerra.issparser.model.colors.hairandskin.TeamHairAndSkin;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,19 +84,6 @@ public class FlagColorRomHandler implements RomHandler<ColoredPart> {
         return new ColoredPart(partColors);
     }
 
-    public void writeToRom(Map<Team, ? extends ColoredPart> colors) throws IOException {  /*
-        StringBuilder sb = new StringBuilder();
-        for (Iterable<String> teamPlayers : playersByTeam) {
-            for (String teamPlayer : teamPlayers) {
-                sb.append(io.github.rodmguerra.issparser.commons.ParsingUtils.cutAndCenter(teamPlayer, NAME_LENGTH));
-            }
-        }
-        byte[] bytes = io.github.rodmguerra.issparser.commons.ParsingUtils.issBytes(sb);
-        System.out.println(io.github.rodmguerra.issparser.commons.ParsingUtils.bytesString(bytes));
-        io.github.rodmguerra.issparser.commons.FileUtils.writeToPosition(rom, bytes, RANGE1_OFFSET);   */
-
-        //writePredominantColor(team, teamKits);
-    }
 
     @Override
     public ColoredPart readFromRomAt(Team team) throws IOException {

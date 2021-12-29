@@ -1,13 +1,24 @@
 package io.github.rodmguerra.issparser.commons;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public interface RomHandler<T> {
 
-    Map<Team, T> readFromRom() throws IOException;
+    default Map<Team, T> readFromRom() throws IOException {
+        Map<Team, T> map = new LinkedHashMap<>();
+        for (Team team : Team.values()) {
+            map.put(team, readFromRomAt(team));
+        }
+        return map;
+    }
 
-    void writeToRom(Map<Team, ? extends T> input) throws IOException;
+    default void writeToRom(Map<Team, ? extends T> input) throws IOException {
+        for (Team team : input.keySet()) {
+            writeToRomAt(team, input.get(team));
+        }
+    }
 
     T readFromRomAt(Team team) throws IOException;
 

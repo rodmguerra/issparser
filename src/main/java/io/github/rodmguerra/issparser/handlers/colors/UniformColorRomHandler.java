@@ -155,20 +155,6 @@ public class UniformColorRomHandler implements RomHandler<TeamUniforms> {
         return new byte[]{outputBytes[1], outputBytes[0]};
     }
 
-    public void writeToRom(Map<Team, ? extends TeamUniforms> kits) throws IOException {  /*
-        StringBuilder sb = new StringBuilder();
-        for (Iterable<String> teamPlayers : playersByTeam) {
-            for (String teamPlayer : teamPlayers) {
-                sb.append(io.github.rodmguerra.issparser.commons.ParsingUtils.cutAndCenter(teamPlayer, NAME_LENGTH));
-            }
-        }
-        byte[] bytes = io.github.rodmguerra.issparser.commons.ParsingUtils.issBytes(sb);
-        System.out.println(io.github.rodmguerra.issparser.commons.ParsingUtils.bytesString(bytes));
-        io.github.rodmguerra.issparser.commons.FileUtils.writeToPosition(rom, bytes, RANGE1_OFFSET);   */
-
-        //writePredominantColor(team, teamKits);
-    }
-
     @Override
     public TeamUniforms readFromRomAt(Team team) throws IOException {
         System.out.println("Reading kits of team " + team);

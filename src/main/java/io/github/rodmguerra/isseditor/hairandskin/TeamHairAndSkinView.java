@@ -1,26 +1,37 @@
 package io.github.rodmguerra.isseditor.hairandskin;
 
-import io.github.rodmguerra.issparser.model.colors.hairandskin.TeamHairAndSkin;
+import io.github.rodmguerra.issparser.model.HairAndSkinCombo;
+import io.github.rodmguerra.issparser.model.HairStyle;
+import io.github.rodmguerra.issparser.model.SpecialHair;
+import io.github.rodmguerra.issparser.model.SpecialSkin;
+import io.github.rodmguerra.issparser.model.colors.hairandskin.NormalHairAndSkin;
+
+import javax.swing.*;
+import java.util.stream.Stream;
 
 public class TeamHairAndSkinView {
 
     private final HairAndSkinView first;
-    private final HairAndSkinView second;
+    //private final HairAndSkinView second;
     private final HairAndSkinView goalkeeper;
+    private final JComboBox<String> specialHairField;
+    private final JComboBox<String> specialSkinField;
 
     public TeamHairAndSkinView(HairAndSkinView first, HairAndSkinView second, HairAndSkinView goalkeeper) {
         this.first = first;
-        this.second = second;
+        //this.second = second;
         this.goalkeeper = goalkeeper;
+        this.specialHairField = new JComboBox<>(Stream.of(SpecialHair.values()).map(SpecialHair::toString).toArray(String[]::new));
+        this.specialSkinField = new JComboBox<>(Stream.of(SpecialSkin.values()).map(SpecialSkin::toString).toArray(String[]::new));
     }
 
     public HairAndSkinView getFirst() {
         return first;
     }
-
+                    /*
     public HairAndSkinView getSecond() {
         return second;
-    }
+    }                 */
 
     public HairAndSkinView getGoalkeeper() {
         return goalkeeper;
@@ -35,7 +46,7 @@ public class TeamHairAndSkinView {
 
         if (first != null ? !first.equals(that.first) : that.first != null) return false;
         if (goalkeeper != null ? !goalkeeper.equals(that.goalkeeper) : that.goalkeeper != null) return false;
-        if (second != null ? !second.equals(that.second) : that.second != null) return false;
+        //if (second != null ? !second.equals(that.second) : that.second != null) return false;
 
         return true;
     }
@@ -43,7 +54,7 @@ public class TeamHairAndSkinView {
     @Override
     public int hashCode() {
         int result = first != null ? first.hashCode() : 0;
-        result = 31 * result + (second != null ? second.hashCode() : 0);
+        //result = 31 * result + (second != null ? second.hashCode() : 0);
         result = 31 * result + (goalkeeper != null ? goalkeeper.hashCode() : 0);
         return result;
     }
@@ -52,13 +63,26 @@ public class TeamHairAndSkinView {
         return new TeamHairAndSkinView(HairAndSkinView.zero(1, 5), HairAndSkinView.zero(1, 5), HairAndSkinView.zero(1, 3));
     }
 
-    public void setFromModel(TeamHairAndSkin teamHairAndSkin) {
-        first.setFromModel(teamHairAndSkin.getFirst());
-        second.setFromModel(teamHairAndSkin.getSecond());
-        goalkeeper.setFromModel(teamHairAndSkin.getGoalkeeper());
+    public void setFromModel(HairAndSkinCombo combo) {
+        first.setFromModel(combo.getNormal().getFirst());
+        //second.setFromModel(combo.getNormal().getSecond());
+        goalkeeper.setFromModel(combo.getNormal().getGoalkeeper());
+        specialHairField.setSelectedIndex(combo.getSpecialHair().ordinal());
+        specialSkinField.setSelectedIndex(combo.getSpecialSkin().ordinal());
     }
 
-    public TeamHairAndSkin toModel() {
-        return new TeamHairAndSkin(first.toModel(), second.toModel(), goalkeeper.toModel());
+    public JComboBox<String> getSpecialHairField() {
+        return specialHairField;
+    }
+
+    public JComboBox<String> getSpecialSkinField() {
+        return specialSkinField;
+    }
+
+    public HairAndSkinCombo toModel() {
+        NormalHairAndSkin normal = new NormalHairAndSkin(first.toModel(), first.toModel(), goalkeeper.toModel());
+        SpecialHair specialHair = SpecialHair.at(specialHairField.getSelectedIndex());
+        SpecialSkin specialSkin = SpecialSkin.at(specialSkinField.getSelectedIndex());
+        return new HairAndSkinCombo(normal, specialHair, specialSkin);
     }
 }

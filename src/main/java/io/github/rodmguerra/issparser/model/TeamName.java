@@ -1,4 +1,4 @@
-package io.github.rodmguerra.issparser.handlers.texts;
+package io.github.rodmguerra.issparser.model;
 
 
 import io.github.rodmguerra.issparser.model.TeamNameText;

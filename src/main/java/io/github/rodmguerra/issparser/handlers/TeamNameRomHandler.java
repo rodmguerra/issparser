@@ -2,7 +2,7 @@ package io.github.rodmguerra.issparser.handlers;
 
 
 import io.github.rodmguerra.issparser.commons.RomHandler;
-import io.github.rodmguerra.issparser.handlers.texts.TeamName;
+import io.github.rodmguerra.issparser.model.TeamName;
 import io.github.rodmguerra.issparser.model.TeamNameText;
 import io.github.rodmguerra.issparser.model.tiles.TeamNameTiles;
 
@@ -17,15 +17,6 @@ public class TeamNameRomHandler implements RomHandler<TeamName> {
     public TeamNameRomHandler(RomHandler<TeamNameText> menuHandler, RomHandler<TeamNameTiles> gameHandler) {
         this.menuHandler = menuHandler;
         this.gameHandler = gameHandler;
-    }
-    @Override
-    public Map<Team, TeamName> readFromRom() throws IOException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void writeToRom(Map<Team, ? extends TeamName> input) throws IOException {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

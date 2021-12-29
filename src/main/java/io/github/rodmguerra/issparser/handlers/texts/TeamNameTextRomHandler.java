@@ -38,11 +38,6 @@ public class TeamNameTextRomHandler implements RomHandler<TeamNameText> {
     }
 
     @Override
-    public void writeToRom(Map<Team, ? extends TeamNameText> input) throws IOException {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
     public TeamNameText readFromRomAt(Team team) throws IOException {
         int offset = readPointerAt(team);
         System.out.println(Integer.toHexString(offset));

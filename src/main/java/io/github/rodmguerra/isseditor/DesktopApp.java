@@ -39,7 +39,7 @@ public class DesktopApp {
         router = new Router(frame);
         JMenuBar menuBar = new JMenuBar();
         JMenu file = subMenu(menuBar, "File");
-        JMenuItem open = subMenuItem(file, "Open ROM...");
+        JMenuItem open = subMenuItem(file, Texts.OPEN_ROM);
         open.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
@@ -55,7 +55,7 @@ public class DesktopApp {
         frame.setLayout(grid);
         frame.setVisible(true);
         frame.setResizable(false);
-        frame.setTitle("rodmguerra - ISS Studio 1.5-beta");
+        frame.setTitle(Texts.TITLE);
         router.navigate(Router.Route.HOME, new State());
     }
 

@@ -2,7 +2,11 @@ package io.github.rodmguerra.issparser.commons;
 
 import com.google.common.base.Strings;
 
+import java.nio.ByteBuffer;
 import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ParsingUtils {
 
@@ -82,6 +86,27 @@ public class ParsingUtils {
         sb.append(name);
         sb.append(Strings.repeat(" ", endDummyCount));
         return sb;
+    }
+
+
+    public static byte[] bytes(byte[] input, int offset, int size) {
+        return Arrays.copyOfRange(input, offset, offset + size);
+    }
+
+    public static byte[] arrayOf(List<Byte> byteList) {
+        byte[] bytes = new byte[byteList.size()];
+        for (int i = 0; i < byteList.size(); i++) {
+            bytes[i] = byteList.get(i);
+        }
+        return bytes;
+    }
+
+    public static List<Byte> listOf(byte[] bytes) {
+        List<Byte> list = new ArrayList<>();
+        for (byte aByte : bytes) {
+            list.add(aByte);
+        }
+        return list;
     }
 
 }

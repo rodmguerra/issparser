@@ -5,6 +5,7 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 import io.github.rodmguerra.issparser.commons.FileUtils;
 import io.github.rodmguerra.issparser.commons.ParsingUtils;
+import io.github.rodmguerra.issparser.commons.PlayerRomHandler;
 import io.github.rodmguerra.issparser.commons.RomHandler;
 
 import java.io.File;
@@ -14,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PlayerNameRomHandler implements RomHandler<Iterable<String>> {
+public class PlayerNameRomHandler implements PlayerRomHandler<String> {
     private final File rom;
     private final long offset;
 
@@ -101,10 +102,30 @@ public class PlayerNameRomHandler implements RomHandler<Iterable<String>> {
         }
         byte[] bytes = ParsingUtils.issBytes(sb);
         //System.out.println(ParsingUtils.bytesString(bytes));
-        FileUtils.writeToPosition(rom, bytes, offset + positionOf(team) * TEAM_LENGTH);
+        FileUtils.writeToPosition(rom, bytes, offset(team));
     }
 
     public int positionOf(Team team) {
         return teamPositions.indexOf(team);
+    }
+
+    @Override
+    public String readFromRomAt(Team team, int playerIndex) throws IOException {
+        ByteSource source = Files.asByteSource(rom).slice(offset(team, playerIndex), NAME_LENGTH);
+        return ParsingUtils.issText(source.read()).trim();
+    }
+
+    private long offset(Team team, int playerIndex) {
+        return offset(team) + playerIndex * NAME_LENGTH;
+    }
+
+    private long offset(Team team) {
+        return offset + positionOf(team) * TEAM_LENGTH;
+    }
+
+    @Override
+    public void writeToRomAt(Team team, int playerIndex, String name) throws IOException {
+        byte[] bytes = ParsingUtils.issBytes(treatName(name));
+        FileUtils.writeToPosition(rom, bytes, offset(team, playerIndex));
     }
 }

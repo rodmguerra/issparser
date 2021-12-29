@@ -10,7 +10,7 @@ import io.github.rodmguerra.issparser.commons.RomHandler;
 import io.github.rodmguerra.issparser.model.colors.ColoredPart;
 import io.github.rodmguerra.issparser.model.colors.RGB;
 import io.github.rodmguerra.issparser.model.colors.hairandskin.HairAndSkin;
-import io.github.rodmguerra.issparser.model.colors.hairandskin.TeamHairAndSkin;
+import io.github.rodmguerra.issparser.model.colors.hairandskin.NormalHairAndSkin;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class HairAndSkinRomHandler implements RomHandler<TeamHairAndSkin> {
+public class HairAndSkinRomHandler implements RomHandler<NormalHairAndSkin> {
     private final File rom;
 
 
@@ -59,7 +59,7 @@ public class HairAndSkinRomHandler implements RomHandler<TeamHairAndSkin> {
                 Team.SWITZ, Team.DENMARK, Team.AUSTRIA).build();
     }
 
-    public Map<Team, TeamHairAndSkin> readFromRom() throws IOException {
+    public Map<Team, NormalHairAndSkin> readFromRom() throws IOException {
         ByteSource file = Files.asByteSource(rom);
 
         ByteSource fRange1 = file.slice(FIRST_RANGE1_OFFSET, range1.size() * OUTFIELD_STEP);
@@ -92,9 +92,9 @@ public class HairAndSkinRomHandler implements RomHandler<TeamHairAndSkin> {
             keeperKits.put(team, parseHairAndSkin(keeperKitBytes, KEEPER_STEP * i++));
         }
 
-        Map<Team, TeamHairAndSkin> kits = new HashMap<>();
+        Map<Team, NormalHairAndSkin> kits = new HashMap<>();
         for (Team team : firstKits.keySet()) {
-            kits.put(team, new TeamHairAndSkin(firstKits.get(team), secondKits.get(team), keeperKits.get(team)));
+            kits.put(team, new NormalHairAndSkin(firstKits.get(team), secondKits.get(team), keeperKits.get(team)));
         }
 
         return kits;
@@ -140,22 +140,8 @@ public class HairAndSkinRomHandler implements RomHandler<TeamHairAndSkin> {
         return new ColoredPart(partColors);
     }
 
-    public void writeToRom(Map<Team, ? extends TeamHairAndSkin> kits) throws IOException {  /*
-        StringBuilder sb = new StringBuilder();
-        for (Iterable<String> teamPlayers : playersByTeam) {
-            for (String teamPlayer : teamPlayers) {
-                sb.append(io.github.rodmguerra.issparser.commons.ParsingUtils.cutAndCenter(teamPlayer, NAME_LENGTH));
-            }
-        }
-        byte[] bytes = io.github.rodmguerra.issparser.commons.ParsingUtils.issBytes(sb);
-        System.out.println(io.github.rodmguerra.issparser.commons.ParsingUtils.bytesString(bytes));
-        io.github.rodmguerra.issparser.commons.FileUtils.writeToPosition(rom, bytes, RANGE1_OFFSET);   */
-
-        //writePredominantColor(team, teamKits);
-    }
-
     @Override
-    public TeamHairAndSkin readFromRomAt(Team team) throws IOException {
+    public NormalHairAndSkin readFromRomAt(Team team) throws IOException {
         System.out.println("Reading hairs and skins of team " + team);
 
         ByteSource source = Files.asByteSource(rom);
@@ -163,14 +149,14 @@ public class HairAndSkinRomHandler implements RomHandler<TeamHairAndSkin> {
         byte[] secondKitBytes = source.slice(getSecondKitOffset(team), OUTFIELD_STEP).read();
         byte[] keeperKitBytes = source.slice(getGoalkeeperKitOffset(team), KEEPER_STEP).read();
 
-        return new TeamHairAndSkin(parseHairAndSkin(firstKitBytes, 0), parseHairAndSkin(secondKitBytes, 0), parseKeeperHairAndSkin(keeperKitBytes, 0));
+        return new NormalHairAndSkin(parseHairAndSkin(firstKitBytes, 0), parseHairAndSkin(secondKitBytes, 0), parseKeeperHairAndSkin(keeperKitBytes, 0));
     }
 
     @Override
-    public void writeToRomAt(Team team, TeamHairAndSkin teamHairAndSkin) throws IOException {
-        FileUtils.writeToPosition(rom, serialize(teamHairAndSkin.getFirst()), getFirstKitOffset(team));
-        FileUtils.writeToPosition(rom, serialize(teamHairAndSkin.getSecond()), getSecondKitOffset(team));
-        FileUtils.writeToPosition(rom, serialize(teamHairAndSkin.getGoalkeeper()), getGoalkeeperKitOffset(team));
+    public void writeToRomAt(Team team, NormalHairAndSkin normalHairAndSkin) throws IOException {
+        FileUtils.writeToPosition(rom, serialize(normalHairAndSkin.getFirst()), getFirstKitOffset(team));
+        FileUtils.writeToPosition(rom, serialize(normalHairAndSkin.getSecond()), getSecondKitOffset(team));
+        FileUtils.writeToPosition(rom, serialize(normalHairAndSkin.getGoalkeeper()), getGoalkeeperKitOffset(team));
     }
 
 

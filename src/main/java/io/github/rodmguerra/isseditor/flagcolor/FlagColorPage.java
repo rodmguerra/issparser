@@ -2,11 +2,8 @@ package io.github.rodmguerra.isseditor.flagcolor;
 
 import io.github.rodmguerra.isseditor.color.views.ColoredPartView;
 import io.github.rodmguerra.isseditor.color.views.RGBView;
-import io.github.rodmguerra.isseditor.hairandskin.HairAndSkinView;
-import io.github.rodmguerra.isseditor.hairandskin.TeamHairAndSkinView;
 import io.github.rodmguerra.isseditor.team.AbstractTeamPage;
 import io.github.rodmguerra.issparser.model.colors.ColoredPart;
-import io.github.rodmguerra.issparser.model.colors.hairandskin.TeamHairAndSkin;
 
 import javax.swing.*;
 import java.awt.*;
