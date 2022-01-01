@@ -9,8 +9,11 @@ import io.github.rodmguerra.issparser.model.colors.hairandskin.NormalHairAndSkin
 import javax.swing.*;
 import java.awt.*;
 
+import static io.github.rodmguerra.isseditor.Texts.string;
+
 public class HairAndSkinColorPage extends AbstractTeamPage<HairAndSkinCombo> {
     private TeamHairAndSkinView view;
+    private static final String PAGE = "rom.feature.player_colors";
 
     @Override
     protected int resourceIndex() {
@@ -24,10 +27,10 @@ public class HairAndSkinColorPage extends AbstractTeamPage<HairAndSkinCombo> {
         layout.setAlignOnBaseline(true);
         innerPanel.setLayout(layout);
         if(view == null) view = TeamHairAndSkinView.zero();
-        innerPanel.add(panelFor("Normal players", view.getFirst()));
-        innerPanel.add(specialPanel("Special players"));
+        innerPanel.add(panelFor(string(PAGE, "normal", "title"), view.getFirst()));
+        innerPanel.add(specialPanel(string(PAGE, "special", "title")));
         //innerPanel.add(panelFor("Second", view.getSecond()));
-        innerPanel.add(panelFor("Goalkeeper", view.getGoalkeeper()));
+        innerPanel.add(panelFor(string(PAGE, "goalkeeper", "title"), view.getGoalkeeper()));
         return innerPanel;
     }
 
@@ -38,10 +41,10 @@ public class HairAndSkinColorPage extends AbstractTeamPage<HairAndSkinCombo> {
 
         JPanel hairPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         hairPanel.add(view.getSpecialHairField());
-        hairPanel.setBorder(BorderFactory.createTitledBorder("Hair"));
+        hairPanel.setBorder(BorderFactory.createTitledBorder(string(PAGE, "hair", "title")));
         JPanel skinPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         skinPanel.add(view.getSpecialSkinField());
-        skinPanel.setBorder(BorderFactory.createTitledBorder("Skin"));
+        skinPanel.setBorder(BorderFactory.createTitledBorder(string(PAGE, "skin", "title")));
 
         panel.add(hairPanel);
         panel.add(skinPanel);
@@ -58,8 +61,8 @@ public class HairAndSkinColorPage extends AbstractTeamPage<HairAndSkinCombo> {
         panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
         panel.setVisible(true);
 
-        panel.add(panelForPart("Hair", hs.getHair()));
-        panel.add(panelForPart("Skin", hs.getSkin()));
+        panel.add(panelForPart(string(PAGE, "hair", "title"), hs.getHair()));
+        panel.add(panelForPart(string(PAGE, "skin", "title"), hs.getSkin()));
 
         panel.setBorder(BorderFactory.createTitledBorder(title));
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);

@@ -17,14 +17,16 @@ import java.util.function.Consumer;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static io.github.rodmguerra.isseditor.ColorUtils.colorFromSnesRGB;
+import static io.github.rodmguerra.isseditor.Texts.string;
 import static java.util.stream.Collectors.toList;
 
 public class FlagDesignPage extends AbstractTeamPage<Flag> {
+    private static final String PAGE = "rom.feature.flag_design";
     private FlagDesignView design;
     private ColoredPartView colors;
     private JLabel teamsUsing;
     private Set<RomHandler.Team> teamsUsingThisFlag = new LinkedHashSet<>();
-    private JButton moveButton;
+    //private JButton moveButton;
     private JButton addButton;
     private Runnable moveOutConsumer = () -> {
     };
@@ -88,10 +90,10 @@ public class FlagDesignPage extends AbstractTeamPage<Flag> {
                 rgbPanel.add(rgbs[i].getRed());
                 rgbPanel.add(rgbs[i].getGreen());
                 rgbPanel.add(rgbs[i].getBlue());
-                String title = "Color " + (i + 1);
+                String title = String.format(string(PAGE, "color", "numbered", "title"), (i + 1));
                 rgbPanel.setBorder(BorderFactory.createTitledBorder(title));
-                if(i == 0) rgbPanel.setToolTipText("Color 1 is also used for player number on shirt");
-            } else rgbPanel.setBorder(BorderFactory.createTitledBorder("Transparent " + (i + 1)));
+                if(i == 0) rgbPanel.setToolTipText(string(PAGE,"color", "first", "hint"));
+            } else rgbPanel.setBorder(BorderFactory.createTitledBorder(string(PAGE, "color", "transparent", "title")));
             radioPanel.add(rgbPanel);
 
             rgbPanel.setAlignmentY(Component.TOP_ALIGNMENT);
@@ -119,12 +121,12 @@ public class FlagDesignPage extends AbstractTeamPage<Flag> {
         JPanel pointerPanel = new JPanel(new BorderLayout());
         //teamsUsingLabel.setForeground(Color.BLUE);
         RomHandler.Team team = getCurrentTeam();
-        moveButton = new JButton("Make design exclusive of " + team );
+        /*moveButton = new JButton("Make design exclusive of " + team );
         moveButton.addActionListener(e -> {
             setTeamsUsing(Sets.newLinkedHashSet(Arrays.asList(team)));
-        });
+        }); */
         //addButton = new JButton("Apply design to other teams...");
-        addButton = new JButton("Change...");
+        addButton = new JButton(string(PAGE, "sharing", "change", "action"));
         addButton.addActionListener(e -> new AddTeamModal(pointerPanel).setVisible(true));
 
         //saveButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -141,12 +143,12 @@ public class FlagDesignPage extends AbstractTeamPage<Flag> {
         JPanel rightPanel = new JPanel();
         BoxLayout rightPanelLayout = new BoxLayout(rightPanel, BoxLayout.Y_AXIS);
         rightPanel.setLayout(rightPanelLayout);
-        rightPanel.add(moveButton);
+        //rightPanel.add(moveButton);
         rightPanel.add(addButton);
         pointerPanel.add(rightPanel, BorderLayout.LINE_END);
-        outputPanel.setBorder(BorderFactory.createTitledBorder("Design"));
-        radioPanel.setBorder(BorderFactory.createTitledBorder("Color"));
-        pointerPanel.setBorder(BorderFactory.createTitledBorder("Other teams using this design"));
+        outputPanel.setBorder(BorderFactory.createTitledBorder(string(PAGE, "design", "title")));
+        radioPanel.setBorder(BorderFactory.createTitledBorder(string(PAGE, "color", "title")));
+        pointerPanel.setBorder(BorderFactory.createTitledBorder(string(PAGE, "sharing", "title")));
         outer.add(pointerPanel);
         outer.add(outputPanel);
         outer.add(radioPanel);
@@ -193,7 +195,9 @@ public class FlagDesignPage extends AbstractTeamPage<Flag> {
     }
 
     private void setTeamsUsing(Set<RomHandler.Team> teams) {
-        List<String> strings = teams.stream().map(RomHandler.Team::toString).collect(toList());
+        //List<String> strings = teams.stream().map(RomHandler.Team::toString).collect(toList());
+        String[] teamNames = teamNames();
+        List<String> strings = teams.stream().map(t -> teamNames[t.ordinal()]).collect(toList());
         RomHandler.Team currentTeam = getCurrentTeam();
         if(currentTeam != null) strings.remove(currentTeam.toString());
         List<String> truncate = truncate(newArrayList(strings), 5);
@@ -205,9 +209,9 @@ public class FlagDesignPage extends AbstractTeamPage<Flag> {
         this.teamsUsing.setText(labelText);
         this.teamsUsingThisFlag = teams;
         System.out.println(teams);
-        this.moveButton.setText("Make design exclusive of " + getCurrentTeam());
+        //this.moveButton.setText("Make design exclusive of " + getCurrentTeam());
         //this.moveButton.setVisible(teams.size() > 1);
-        this.moveButton.setVisible(false);
+        //this.moveButton.setVisible(false);
         //this.addButton.setVisible(teams.size() < RomHandler.Team.values().length);
         this.addButton.setVisible(true);
         JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(panel);
@@ -246,7 +250,7 @@ public class FlagDesignPage extends AbstractTeamPage<Flag> {
 
         public AddTeamModal(Component component) {
             //setTitle("Apply design to other teams...");
-            setTitle("Apply design to other teams...");
+            setTitle(string(PAGE, "sharing", "change", "title"));
 
             getContentPane().setLayout(new BorderLayout());
 
@@ -265,9 +269,10 @@ public class FlagDesignPage extends AbstractTeamPage<Flag> {
                 panel.setLayout(layout);
                 panel.setAlignmentY(Component.TOP_ALIGNMENT);
                 int rowsInCol = remainder-- > 0 ? rows + 1 : rows;
+                String[] teamNames = teamNames();
                 for (int j = 0; j < rowsInCol; j++) {
                     RomHandler.Team team = iterator.next();
-                    JCheckBox checkBox = new JCheckBox(team.toString());
+                    JCheckBox checkBox = new JCheckBox(teamNames[team.ordinal()]);
                     panel.add(checkBox);
                     checkBoxes.add(checkBox);
                     checkBox.setSelected(teamsUsingThisFlag.contains(team));
@@ -275,7 +280,7 @@ public class FlagDesignPage extends AbstractTeamPage<Flag> {
                 checkPanel.add(panel);
             }
             JPanel buttonBox = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-            saveButton = new JButton("OK");
+            saveButton = new JButton(string("ok", "action"));
             AddTeamModal that = this;
             saveButton.addActionListener(e -> {
                 List<RomHandler.Team> selectedTeams =
@@ -290,7 +295,7 @@ public class FlagDesignPage extends AbstractTeamPage<Flag> {
                 that.setVisible(false);
                 panel.repaint();
             });
-            JButton cancelButton = new JButton("Cancel");
+            JButton cancelButton = new JButton(string("cancel", "action"));
 
             cancelButton.addActionListener(e -> that.setVisible(false));
             buttonBox.add(cancelButton);

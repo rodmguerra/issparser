@@ -8,10 +8,13 @@ import io.github.rodmguerra.issparser.model.colors.uniforms.TeamUniforms;
 import javax.swing.*;
 import java.awt.*;
 
+import static io.github.rodmguerra.isseditor.Texts.string;
+
 public class UniformColorPage extends AbstractTeamPage<TeamUniforms> {
 
     private JLabel teamKitsLabel;
     private TeamUniformsView teamKitsView;
+    private static final String PAGE = "rom.feature.uniform_colors";
 
     public UniformColorPage(){
         super();
@@ -31,9 +34,9 @@ public class UniformColorPage extends AbstractTeamPage<TeamUniforms> {
         innerPanel.setLayout(playersLayout);
         if(teamKitsLabel == null) teamKitsLabel = new JLabel();
         if(teamKitsView == null) teamKitsView = TeamUniformsView.zero();
-        innerPanel.add(panelForKit("First", teamKitsView.getFirst(), "Predominant color"));
-        innerPanel.add(panelForKit("Second", teamKitsView.getSecond()));
-        innerPanel.add(panelForKeeperKit("Goalkeeper", teamKitsView.getGoalkeeper()));
+        innerPanel.add(panelForKit(string(PAGE, "first", "title"), teamKitsView.getFirst(), string(PAGE, "first", "predominant", "title")));
+        innerPanel.add(panelForKit(string(PAGE, "second", "title"), teamKitsView.getSecond()));
+        innerPanel.add(panelForKeeperKit(string(PAGE, "goalkeeper", "title"), teamKitsView.getGoalkeeper()));
 
 
         return innerPanel;
@@ -48,9 +51,9 @@ public class UniformColorPage extends AbstractTeamPage<TeamUniforms> {
         panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
         panel.setVisible(true);
 
-        addPartToPanel("Shirt", panel, kit.getShirt(), predominantTitle);
-        addPartToPanel("Shorts", panel, kit.getShorts(), null);
-        addPartToPanel("Socks", panel, kit.getSocks(), null);
+        addPartToPanel(string(PAGE, "shirt", "title"), panel, kit.getShirt(), predominantTitle);
+        addPartToPanel(string(PAGE, "shorts", "title"), panel, kit.getShorts(), null);
+        addPartToPanel(string(PAGE, "socks", "title"), panel, kit.getSocks(), null);
 
 
         panel.setBorder(BorderFactory.createTitledBorder(title));
@@ -63,8 +66,8 @@ public class UniformColorPage extends AbstractTeamPage<TeamUniforms> {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
         panel.setVisible(true);
-        addPartToPanel("Shirt and Socks", panel, kit.getShirtAndSocks(), null);
-        addPartToPanel("Shorts", panel, kit.getShorts(), null);
+        addPartToPanel(string(PAGE, "shirt_and_socks", "title"), panel, kit.getShirtAndSocks(), null);
+        addPartToPanel(string(PAGE, "shorts", "title"), panel, kit.getShorts(), null);
 
         panel.setBorder(BorderFactory.createTitledBorder(title));
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);

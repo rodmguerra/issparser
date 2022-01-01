@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
+import static io.github.rodmguerra.isseditor.Texts.string;
+
 public class HomeController extends AbstractController {
 
     @Override
@@ -24,7 +26,7 @@ public class HomeController extends AbstractController {
         innerPanel.setLayout(layout);
         panel.add(innerPanel);
 
-        JButton openRomButton = new JButton(Texts.OPEN_ROM);
+        JButton openRomButton = new JButton(string("open_rom.action"));
         openRomButton.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
@@ -36,7 +38,7 @@ public class HomeController extends AbstractController {
             }
         });
         innerPanel.add(Box.createRigidArea(new Dimension(50, 50)));
-        innerPanel.add(new JLabel(Texts.TITLE));
+        innerPanel.add(new JLabel(string("title")));
         innerPanel.add(Box.createRigidArea(new Dimension(50, 10)));
         innerPanel.add(openRomButton);
         innerPanel.add(Box.createRigidArea(new Dimension(50, 50)));

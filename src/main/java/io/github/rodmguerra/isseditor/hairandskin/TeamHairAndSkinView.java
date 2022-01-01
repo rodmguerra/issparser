@@ -9,8 +9,12 @@ import io.github.rodmguerra.issparser.model.colors.hairandskin.NormalHairAndSkin
 import javax.swing.*;
 import java.util.stream.Stream;
 
+import static io.github.rodmguerra.isseditor.Texts.string;
+import static io.github.rodmguerra.isseditor.Texts.strings;
+
 public class TeamHairAndSkinView {
 
+    public static final String PAGE = "rom.feature.player_colors";
     private final HairAndSkinView first;
     //private final HairAndSkinView second;
     private final HairAndSkinView goalkeeper;
@@ -21,8 +25,9 @@ public class TeamHairAndSkinView {
         this.first = first;
         //this.second = second;
         this.goalkeeper = goalkeeper;
-        this.specialHairField = new JComboBox<>(Stream.of(SpecialHair.values()).map(SpecialHair::toString).toArray(String[]::new));
-        this.specialSkinField = new JComboBox<>(Stream.of(SpecialSkin.values()).map(SpecialSkin::toString).toArray(String[]::new));
+        this.specialHairField = new JComboBox<>(strings(PAGE, "special", "hair", "values"));
+        SpecialSkin[] skins = SpecialSkin.values();
+        this.specialSkinField = new JComboBox<>(strings(PAGE, "special", "skin", "values"));
     }
 
     public HairAndSkinView getFirst() {

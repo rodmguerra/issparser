@@ -1,24 +1,25 @@
 # Rodmguerra's ISS Studio
 
-ISS Studio is a Graphical User Interface to create your own game based on the game **International Superstar Soccer** for Super Nintendo Entertainment System (SNES).
+ISS Studio is a Graphical User Interface to create your own game based on **International Superstar Soccer** for Super Nintendo Entertainment System (SNES).
 
 
-### Latest version (1.5 beta) ###
-- [Windows executable (.exe)](https://github.com/rodmguerra/issparser/releases/download/v1.5-beta/rodmguerra-iss-studio-1.5-beta-windows.zip)
-- [Java archive (.jar)](https://github.com/rodmguerra/issparser/releases/download/v1.5-beta/rodmguerra-iss-studio-1.5-beta-jarfile.zip)
+### Latest version (1.6 beta) ###
+- [Windows executable (.exe)](https://github.com/rodmguerra/issparser/releases/download/v1.6-beta/rodmguerra-iss-studio-1.6-beta-windows.zip)
+- [Java archive (.jar)](https://github.com/rodmguerra/issparser/releases/download/v1.6-beta/rodmguerra-iss-studio-1.6-beta-jarfile.zip)
 
 ### Features ###
 You can edit:
+- Players (name, shirt number, hair and skin color, normal or special, hairstyle)
+- Hair and skin colors (normal players, special players and goalkeepers)
 - Team names (positional text and tile images under the flag)
-- Player names
 - Flag (design and colors)
-- Uniform (kit) colors (for outfield players and goalkeepers)
-- Hair and skin colors (for outfield players and goalkeepers)
+- Uniform (kit) colors (for outfield players, first and second kits, and goalkeepers)
 
 ### Notes ###
 - Works well with original ROM **International Superstar Soccer (Europe)**, and ROMs based on it
 - When you save the design of a flag or a team name tile based image, team name tiled images are moved to the address 0x17680, so that you will have additional space to create more flags than the original game (from 0x48000 to 0x48A7F)
 - Windows is required for the features Flag Design and Team Name, that is because it makes use of konami compressor/decompressor tool which works only in Windows.
+- Fully localized to English, Portuguese and Spanish, according to your operating system's language.
 
 **Addresses used by editor** (you will recieve an error in order to protect your ROM if data overtake these addresses)
 - 0x48000 to 0x48A7F - Flag design tile images
@@ -46,26 +47,27 @@ You can edit:
 # Rodmguerra's ISS Studio
 🇧🇷 Information in Portuguese / Informações em português
 
-ISS Studio é uma interface gráfica para criar seu próprio jogo baseado no jogo **International Superstar Soccer** do Super Nintendo Entertainment System (SNES).
+ISS Studio é uma interface gráfica para criar seu próprio jogo baseado no **International Superstar Soccer** do Super Nintendo Entertainment System (SNES).
 
 
-### Versão mais recente (1.5 beta) ###
+### Versão mais recente (1.6 beta) ###
 - [Executável Windows (.exe)](https://github.com/rodmguerra/issparser/releases/download/v1.5-beta/rodmguerra-iss-studio-1.5-beta-windows.zip)
 - [Arquivo Java (.jar)](https://github.com/rodmguerra/issparser/releases/download/v1.5-beta/rodmguerra-iss-studio-1.5-beta-jarfile.zip)
 
 
 ### Funcionalidades ###
 Você pode editar:
+- Jogadores (nome, número da camisa, cor da pele e do cabelo, normal ou especial, corte de cabelo)
 - Nomes das equipes (texto posicional e imagem quadriculada embaixo da bandeira)
-- Nomes dos jogadores
 - Bandeira (desenho e cores)
-- Cores do uniforme (dos jogadores de linha e dos goleiros)
+- Cores do uniforme (uniformes titular e reserva dos jogadores de linha e uniforme dos goleiros)
 - Cores de pele e cabelo (dos jogadores de linha e dos goleiros)
 
 ### Notas ###
 - Funciona bem com a ROM original **International Superstar Soccer (Europe)**, e ROMs baseadas nela.
 - Quando você salva o desenho de uma bandeira ou do nome de uma equipe, as imagens quadriculadas dos nomes das equipes são movidas para o endereço 0x17680, assim você terá um espaço adicional para criar mais bandeiras que as do jogo original (de 0x48000 a 0x48A7F)
 - É necessário Windows para as funcionalidades Desenho da Bandeira e Nome da Equipe, isso porque elas fazem uso do compressor/descompressor da konami compressor/decompressor que funciona apenas no Windows. 
+- Totalmente traduzido para português, inglês e espanhol, de acordo com a configuração de idioma do sistema operacional
 
 **Endereços usados pelo editor** (você receberá um erro para que sua ROM fique protegida se os dados ultrapassarem esses endereços)
 - 0x48000 to 0x48A7F - Imagens com os desenhos das bandeiras

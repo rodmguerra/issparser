@@ -6,7 +6,7 @@
 
     <groupId>issparser</groupId>
     <artifactId>issparser</artifactId>
-    <version>1.6-alpha</version>
+    <version>1.6-beta</version>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>

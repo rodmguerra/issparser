@@ -8,8 +8,11 @@ import io.github.rodmguerra.issparser.model.colors.ColoredPart;
 import javax.swing.*;
 import java.awt.*;
 
+import static io.github.rodmguerra.isseditor.Texts.string;
+
 public class FlagColorPage extends AbstractTeamPage<ColoredPart> {
     private ColoredPartView view;
+    private static final String PAGE = "rom.feature.flag_colors";
 
     @Override
     protected int resourceIndex() {
@@ -23,7 +26,7 @@ public class FlagColorPage extends AbstractTeamPage<ColoredPart> {
         layout.setAlignOnBaseline(true);
         innerPanel.setLayout(layout);
         if(view == null) view = ColoredPartView.zero(4);
-        innerPanel.add(panelForPart("Flag colors", view));
+        innerPanel.add(panelForPart(string(PAGE, "title"), view));
         return innerPanel;
     }
 
@@ -41,7 +44,7 @@ public class FlagColorPage extends AbstractTeamPage<ColoredPart> {
             rgbPanel.add(partRgb.getGreen());
             rgbPanel.add(partRgb.getBlue());
             partPanel.add(rgbPanel);
-            partPanel.setToolTipText("Color 1 is also used for player number on shirt");
+            partPanel.setToolTipText(string(PAGE, "first", "hint"));
         }
 
         partPanel.setBorder(BorderFactory.createTitledBorder(partName));

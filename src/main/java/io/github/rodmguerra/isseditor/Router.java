@@ -8,7 +8,7 @@ import io.github.rodmguerra.isseditor.hairandskin.HairAndSkinColorController;
 import io.github.rodmguerra.isseditor.hairandskin.HairAndSkinColorPage;
 import io.github.rodmguerra.isseditor.home.HomeController;
 import io.github.rodmguerra.isseditor.playernames.PlayerNameController;
-import io.github.rodmguerra.isseditor.playernames.PlayerNamePage;
+import io.github.rodmguerra.isseditor.playernames.PlayerPage;
 import io.github.rodmguerra.isseditor.teamname.TeamNameController;
 import io.github.rodmguerra.isseditor.teamname.TeamNamePage;
 import io.github.rodmguerra.isseditor.uniformcolors.UniformColorController;
@@ -17,6 +17,8 @@ import io.github.rodmguerra.isseditor.uniformcolors.UniformColorPage;
 import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
+
+import static io.github.rodmguerra.isseditor.Texts.string;
 
 public class Router {
 
@@ -50,7 +52,7 @@ public class Router {
     public Router(JFrame frame) {
         this.frame = frame;
         controllers.put(Route.HOME, new HomeController(this));
-        controllers.put(Route.PLAYER_NAMES, new PlayerNameController(this, new PlayerNamePage()));
+        controllers.put(Route.PLAYER_NAMES, new PlayerNameController(this, new PlayerPage()));
         controllers.put(Route.UNIFORM_COLORS, new UniformColorController(this, new UniformColorPage()));
         controllers.put(Route.HAIR_AND_SKIN_COLORS, new HairAndSkinColorController(this, new HairAndSkinColorPage()));
         controllers.put(Route.FLAG_COLORS, new FlagColorController(this, new FlagColorPage()));
@@ -70,8 +72,10 @@ public class Router {
         frame.getContentPane().removeAll();
         Controller controller = controllers.get(route);
         if(!state.equals(oldState) || !route.equals(oldRoute)) {
+            if(state.getRom() != null) frame.setTitle(state.getRom().getName() + " - " + string("title"));
             controller.setState(state);
         }
+
         frame.getContentPane().add(controller.getPanel());
         double width = frame.getPreferredSize().getWidth();
         double height = frame.getPreferredSize().getHeight();

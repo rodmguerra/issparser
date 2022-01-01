@@ -6,13 +6,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
+import static io.github.rodmguerra.isseditor.Texts.string;
+
 public class DesktopApp {
 
     private Router router;
 
     private DesktopApp() {
-
-
 
 
         try {
@@ -38,8 +38,8 @@ public class DesktopApp {
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         router = new Router(frame);
         JMenuBar menuBar = new JMenuBar();
-        JMenu file = subMenu(menuBar, "File");
-        JMenuItem open = subMenuItem(file, Texts.OPEN_ROM);
+        JMenu file = subMenu(menuBar, string("file", "menu"));
+        JMenuItem open = subMenuItem(file, string("open_rom", "action"));
         open.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
@@ -55,7 +55,7 @@ public class DesktopApp {
         frame.setLayout(grid);
         frame.setVisible(true);
         frame.setResizable(false);
-        frame.setTitle(Texts.TITLE);
+        frame.setTitle(string("title"));
         router.navigate(Router.Route.HOME, new State());
     }
 

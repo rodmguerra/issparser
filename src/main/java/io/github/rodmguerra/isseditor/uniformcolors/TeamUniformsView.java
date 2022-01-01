@@ -6,6 +6,8 @@ import io.github.rodmguerra.issparser.model.colors.uniforms.TeamUniforms;
 import javax.swing.*;
 import java.util.stream.Stream;
 
+import static io.github.rodmguerra.isseditor.Texts.strings;
+
 public class TeamUniformsView {
     private final UniformView first;
     private final UniformView second;
@@ -28,7 +30,7 @@ public class TeamUniformsView {
     }
 
     public static TeamUniformsView zero() {
-        JComboBox<String> predominantColor = new JComboBox<>(Stream.of(PredominantColor.values()).map(PredominantColor::toString).toArray(String[]::new));
+        JComboBox<String> predominantColor = new JComboBox<>(strings("rom.feature.uniform_colors", "first.predominant.values"));
         return new TeamUniformsView(UniformView.zero(), UniformView.zero(), KeeperUniformView.zero(), predominantColor);
     }
 

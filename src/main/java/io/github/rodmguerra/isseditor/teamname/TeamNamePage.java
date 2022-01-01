@@ -11,11 +11,14 @@ import java.util.*;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static io.github.rodmguerra.isseditor.Texts.string;
+import static io.github.rodmguerra.isseditor.Texts.strings;
 
 public class TeamNamePage extends AbstractTeamPage<TeamName> {
     private TeamNameTilesView inGameView;
     private TeamNameText inMenuModel;
     private JTextField inMenuView;
+    private static final String PAGE = "rom.feature.team_name";
 
     @Override
     protected int resourceIndex() {
@@ -67,14 +70,13 @@ public class TeamNamePage extends AbstractTeamPage<TeamName> {
             rgbPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 
         }
-        rgbPanels.get(0).setBorder(BorderFactory.createTitledBorder("Fill"));
-        rgbPanels.get(1).setBorder(BorderFactory.createTitledBorder("Corner"));
-        rgbPanels.get(2).setBorder(BorderFactory.createTitledBorder("Shadow"));
-        rgbPanels.get(3).setBorder(BorderFactory.createTitledBorder("Transparent"));
-
+        String[] colorNames = strings(PAGE, "in_game", "color", "values");
+        for (int i = 0; i < rgbPanels.size(); i++) {
+            rgbPanels.get(i).setBorder(BorderFactory.createTitledBorder(colorNames[i]));
+        }
 
         Box inMenu = new Box(BoxLayout.X_AXIS);
-        inMenu.setBorder(BorderFactory.createTitledBorder("Text"));
+        inMenu.setBorder(BorderFactory.createTitledBorder(string(PAGE, "in_menu", "title")));
         inMenuView = new JTextField("GERMANYGERMANY");
         inMenuView.setAlignmentX(Component.CENTER_ALIGNMENT);
         setSize(inMenuView, inMenuView.getPreferredSize());
@@ -84,13 +86,13 @@ public class TeamNamePage extends AbstractTeamPage<TeamName> {
         outer.add(inMenu);
         Box gridBox = new Box(BoxLayout.Y_AXIS);
 
-        JButton generateButton = new JButton("Generate...");
+        JButton generateButton = new JButton(string(PAGE, "in_game", "generate", "action"));
         generateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         gridBox.add(generateButton);
         generateButton.addActionListener(e -> new GenerateModal(panel).setVisible(true));
         gridBox.add(Box.createRigidArea(new Dimension(0, 10)));
         gridBox.add(grid);
-        gridBox.setBorder(BorderFactory.createTitledBorder("Tiles"));
+        gridBox.setBorder(BorderFactory.createTitledBorder(string(PAGE, "in_game", "title")));
         outer.add(gridBox);
 
 
@@ -134,11 +136,12 @@ public class TeamNamePage extends AbstractTeamPage<TeamName> {
     private class GenerateModal extends JDialog {
 
         public GenerateModal(Component component) {
-            setTitle("Generate tiles from text");
+            //setTitle("Generate tiles from text");
+            setTitle(string(PAGE, "in_game", "generate", "title"));
             setLocationRelativeTo(component);
             getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER));
             JTextField generateField = new JTextField(inMenuView.getText());
-            JButton generateButton = new JButton("Generate");
+            JButton generateButton = new JButton(string("ok", "action"));
             Component that = this;
             generateButton.addActionListener(e -> {
                 inGameView.setFromModel(TeamNameTiles.forText(generateField.getText()));
