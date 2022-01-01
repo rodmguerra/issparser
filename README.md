@@ -42,7 +42,7 @@ You can edit:
 ISS Studio é uma interface gráfica para criar seu próprio jogo baseado no **International Superstar Soccer** do Super Nintendo Entertainment System (SNES).
 
 
-### Baixe a 1.6 beta ###
+### Baixe a versão 1.6 beta ###
 - [Executável Windows (.exe)](https://github.com/rodmguerra/issparser/releases/download/v1.5-beta/rodmguerra-iss-studio-1.5-beta-windows.zip)
 - [Arquivo Java (.jar)](https://github.com/rodmguerra/issparser/releases/download/v1.5-beta/rodmguerra-iss-studio-1.5-beta-jarfile.zip)
 
