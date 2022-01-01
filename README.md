@@ -26,13 +26,6 @@ You can edit:
 - 0x17680 to 0x17FFF - Team name tile images (automatically moved to this address)
 - 0x43ED5 to 0x44486 - Team name positional text data
 
-### Images ###
-#### Team names ####
-![uruguai](https://user-images.githubusercontent.com/1441876/146484653-892e5aba-cbfb-4580-9594-74d98fa5897f.png)
-
-#### Flag design ####
-![vasco-fla](https://user-images.githubusercontent.com/1441876/145671018-c48e3605-cda3-45b8-b940-dd28a9a542b6.png)
-
 ### Author ###
 * Rodrigo Mallmann Guerra
 
@@ -42,7 +35,6 @@ You can edit:
 * Equipe Falcon Brasil, for video tutorials, information on goalkeeper colors, player hair and skin and feature suggestions.
 
 ---
-
 
 # Rodmguerra's ISS Studio
 🇧🇷 Information in Portuguese / Informações em português
@@ -74,13 +66,6 @@ Você pode editar:
 - 0x17680 to 0x17FFF - Imagens quadriculadas dos nomes das equipes (automaticamente movidas para esse endereço)
 - 0x43ED5 to 0x44486 - Dados de texto posicional com os nomes das equipes
 
-### Imagens ###
-#### Nomes das equipes ####
-![uruguai](https://user-images.githubusercontent.com/1441876/146484653-892e5aba-cbfb-4580-9594-74d98fa5897f.png)
-
-#### Desenho das bandeiras ####
-![vasco-fla](https://user-images.githubusercontent.com/1441876/145671018-c48e3605-cda3-45b8-b940-dd28a9a542b6.png)
-
 ### Autor ###
 * Rodrigo Mallmann Guerra
 
@@ -89,3 +74,19 @@ Você pode editar:
 * Marcos Fernandes, pelo apoio dedicado, que foi crucial para que a funcionalidade de desenho das bandeiras fosse possível
 * Equipe Falcon Brasil, pelos tutoriais em vídeo, informações sobre as cores dos goleiros, pele e cabelo dos jogadores e por sugestões de funcionalidades.
 
+---
+
+### Images ###
+#### Players ####
+![players](https://user-images.githubusercontent.com/1441876/147856394-54d090dc-cf29-4f61-a10f-1e6c32f33893.png)
+
+#### Hair and skin colors ####
+![hair-skin](https://user-images.githubusercontent.com/1441876/147856395-78cb2560-8f05-40e6-b398-cfc76e3e63c7.png)
+
+#### Team names ####
+![Team names](https://user-images.githubusercontent.com/1441876/146484653-892e5aba-cbfb-4580-9594-74d98fa5897f.png)
+
+#### Flag design ####
+![Flag design](https://user-images.githubusercontent.com/1441876/145671018-c48e3605-cda3-45b8-b940-dd28a9a542b6.png)
+
+---
