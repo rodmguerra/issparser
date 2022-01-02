@@ -43,8 +43,8 @@ ISS Studio é uma interface gráfica para criar seu próprio jogo baseado no **I
 
 
 ### Baixe a versão 1.6 beta ###
-- [Executável Windows (.exe)](https://github.com/rodmguerra/issparser/releases/download/v1.5-beta/rodmguerra-iss-studio-1.5-beta-windows.zip)
-- [Arquivo Java (.jar)](https://github.com/rodmguerra/issparser/releases/download/v1.5-beta/rodmguerra-iss-studio-1.5-beta-jarfile.zip)
+- [Executável Windows (.exe)](https://github.com/rodmguerra/issparser/releases/download/v1.6-beta/rodmguerra-iss-studio-1.6-beta-windows.zip)
+- [Arquivo Java (.jar)](https://github.com/rodmguerra/issparser/releases/download/v1.6-beta/rodmguerra-iss-studio-1.6-beta-jarfile.zip)
 
 
 ### Funcionalidades ###
